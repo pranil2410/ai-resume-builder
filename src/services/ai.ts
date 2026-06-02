@@ -137,7 +137,7 @@ Output ONLY valid JSON matching this schema.`;
 async function callGemini(apiKey: string, prompt: string, systemInstruction: string): Promise<string> {
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: "gemini-2.5-flash",
     generationConfig: {
       responseMimeType: "application/json",
     },
@@ -205,7 +205,7 @@ export const AIService = {
     try {
       if (config.provider === "gemini") {
         const genAI = new GoogleGenerativeAI(config.apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
         const result = await model.generateContent(`${REWRITE_SYSTEM}\n\nPoint: "${bullet}"`);
         return result.response.text().trim();
       } else {
@@ -251,9 +251,9 @@ export const AIService = {
         rawResponse = await callOpenAI(config.apiKey, `Parse this text:\n\n${text}`, PARSE_SYSTEM);
       }
       return parseJSONFromText(rawResponse);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Parsing failed, returning mock resume data", err);
-      throw new Error("AI parser failed to structure the document. Please try again or use manual creation.");
+      throw new Error(`AI parser failed to structure the document: ${err?.message || "Please try again or use manual creation."}`);
     }
   },
 
@@ -563,7 +563,7 @@ ${JSON.stringify(resume)}`;
     try {
       if (config.provider === "gemini") {
         const genAI = new GoogleGenerativeAI(config.apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
         
         let promptText = "History:\n";
         history.forEach(h => {

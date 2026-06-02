@@ -62,7 +62,7 @@ export default function Dashboard() {
   const [settings, setSettings] = useState<AppSettings>({
     geminiApiKey: "",
     openAiApiKey: "",
-    selectedModel: "mock",
+    selectedModel: "gemini",
   });
   const [showSettings, setShowSettings] = useState(false);
 
