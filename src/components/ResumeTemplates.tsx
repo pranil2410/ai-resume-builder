@@ -7,22 +7,11 @@ interface TemplateProps {
   isCV: boolean;
 }
 
-// Color mapper helper
-const getColorHex = (color: string) => {
-  switch (color) {
-    case "violet": return "rgb(139, 92, 246)";
-    case "indigo": return "rgb(99, 102, 241)";
-    case "emerald": return "rgb(16, 185, 129)";
-    case "rose": return "rgb(244, 63, 94)";
-    case "amber": return "rgb(245, 158, 11)";
-    case "sky": return "rgb(14, 165, 233)";
-    default: return "rgb(75, 85, 99)";
-  }
-};
-
-const getTextColor = (color: string) => `text-${color}-600 dark:text-${color}-400`;
-const getBgColor = (color: string) => `bg-${color}-600`;
-const getBorderColor = (color: string) => `border-${color}-500`;
+// Color mapper helper - Unifies color system to purple accent color
+const getColorHex = (color: string) => "rgb(139, 92, 246)";
+const getTextColor = (color: string) => "text-violet-600";
+const getBgColor = (color: string) => "bg-violet-600";
+const getBorderColor = (color: string) => "border-violet-500";
 
 export const ResumeTemplates: React.FC<TemplateProps & { templateId: string }> = ({
   data,
@@ -101,7 +90,7 @@ const ModernTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) =
         <div className="md:col-span-1 space-y-6">
           {skills && skills.length > 0 && (
             <div>
-              <h2 className="text-lg font-bold border-b pb-2 mb-3 font-display uppercase tracking-wider text-gray-900">Skills</h2>
+              <h2 className="text-lg font-bold border-b pb-2 mb-3 font-display uppercase tracking-wider" style={{ color: colorHex, borderColor: colorHex }}>Skills</h2>
               <div className="space-y-3">
                 {/* Group by category */}
                 {Array.from(new Set(skills.map(s => s.category || "General"))).map(cat => (
@@ -122,7 +111,7 @@ const ModernTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) =
 
           {certifications && certifications.length > 0 && (
             <div>
-              <h2 className="text-lg font-bold border-b pb-2 mb-3 font-display uppercase tracking-wider text-gray-900">Certifications</h2>
+              <h2 className="text-lg font-bold border-b pb-2 mb-3 font-display uppercase tracking-wider" style={{ color: colorHex, borderColor: colorHex }}>Certifications</h2>
               <div className="space-y-3">
                 {certifications.map(c => (
                   <div key={c.id} className="text-xs">
@@ -136,7 +125,7 @@ const ModernTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) =
 
           {achievements && achievements.length > 0 && (
             <div>
-              <h2 className="text-lg font-bold border-b pb-2 mb-3 font-display uppercase tracking-wider text-gray-900">Achievements</h2>
+              <h2 className="text-lg font-bold border-b pb-2 mb-3 font-display uppercase tracking-wider" style={{ color: colorHex, borderColor: colorHex }}>Achievements</h2>
               <div className="space-y-3">
                 {achievements.map(a => (
                   <div key={a.id} className="text-xs">
@@ -151,7 +140,7 @@ const ModernTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) =
           {/* Render CV Specific Awards */}
           {isCV && data.awards && data.awards.length > 0 && (
             <div>
-              <h2 className="text-lg font-bold border-b pb-2 mb-3 font-display uppercase tracking-wider text-gray-900">Awards & Honors</h2>
+              <h2 className="text-lg font-bold border-b pb-2 mb-3 font-display uppercase tracking-wider" style={{ color: colorHex, borderColor: colorHex }}>Awards & Honors</h2>
               <div className="space-y-3">
                 {data.awards.map(a => (
                   <div key={a.id} className="text-xs">
@@ -168,7 +157,7 @@ const ModernTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) =
         <div className="md:col-span-2 space-y-6">
           {experience && experience.length > 0 && (
             <div>
-              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider text-gray-900 flex items-center gap-2">
+              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider flex items-center gap-2" style={{ color: colorHex, borderColor: colorHex }}>
                 <span className="w-1.5 h-6 inline-block" style={{ backgroundColor: colorHex }}></span>
                 Experience
               </h2>
@@ -199,7 +188,7 @@ const ModernTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) =
           {/* Academic Publications */}
           {isCV && data.publications && data.publications.length > 0 && (
             <div>
-              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider text-gray-900 flex items-center gap-2">
+              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider flex items-center gap-2" style={{ color: colorHex, borderColor: colorHex }}>
                 <span className="w-1.5 h-6 inline-block" style={{ backgroundColor: colorHex }}></span>
                 Publications
               </h2>
@@ -219,7 +208,7 @@ const ModernTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) =
           {/* Academic Research */}
           {isCV && data.research && data.research.length > 0 && (
             <div>
-              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider text-gray-900 flex items-center gap-2">
+              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider flex items-center gap-2" style={{ color: colorHex, borderColor: colorHex }}>
                 <span className="w-1.5 h-6 inline-block" style={{ backgroundColor: colorHex }}></span>
                 Research Experience
               </h2>
@@ -242,7 +231,7 @@ const ModernTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) =
 
           {projects && projects.length > 0 && (
             <div>
-              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider text-gray-900 flex items-center gap-2">
+              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider flex items-center gap-2" style={{ color: colorHex, borderColor: colorHex }}>
                 <span className="w-1.5 h-6 inline-block" style={{ backgroundColor: colorHex }}></span>
                 Projects
               </h2>
@@ -268,7 +257,7 @@ const ModernTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) =
 
           {education && education.length > 0 && (
             <div>
-              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider text-gray-900 flex items-center gap-2">
+              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider flex items-center gap-2" style={{ color: colorHex, borderColor: colorHex }}>
                 <span className="w-1.5 h-6 inline-block" style={{ backgroundColor: colorHex }}></span>
                 Education
               </h2>
@@ -293,7 +282,7 @@ const ModernTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) =
           {/* Academic Teaching */}
           {isCV && data.teaching && data.teaching.length > 0 && (
             <div>
-              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider text-gray-900 flex items-center gap-2">
+              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider flex items-center gap-2" style={{ color: colorHex, borderColor: colorHex }}>
                 <span className="w-1.5 h-6 inline-block" style={{ backgroundColor: colorHex }}></span>
                 Teaching Experience
               </h2>
@@ -315,7 +304,7 @@ const ModernTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) =
           {/* Academic Patents */}
           {isCV && data.patents && data.patents.length > 0 && (
             <div>
-              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider text-gray-900 flex items-center gap-2">
+              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider flex items-center gap-2" style={{ color: colorHex, borderColor: colorHex }}>
                 <span className="w-1.5 h-6 inline-block" style={{ backgroundColor: colorHex }}></span>
                 Patents
               </h2>
@@ -337,7 +326,7 @@ const ModernTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) =
           {/* Academic Conferences */}
           {isCV && data.conferences && data.conferences.length > 0 && (
             <div>
-              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider text-gray-900 flex items-center gap-2">
+              <h2 className="text-xl font-bold border-b pb-2 mb-4 font-display uppercase tracking-wider flex items-center gap-2" style={{ color: colorHex, borderColor: colorHex }}>
                 <span className="w-1.5 h-6 inline-block" style={{ backgroundColor: colorHex }}></span>
                 Conferences & Workshops
               </h2>
@@ -371,7 +360,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isC
   return (
     <div className="resume-print-container p-12 bg-white text-slate-800 font-serif shadow-md border border-gray-100 rounded-lg min-h-[297mm]">
       {/* Header Centered */}
-      <div className="text-center pb-6 border-b border-gray-300 mb-6">
+      <div className="text-center pb-6 border-b mb-6" style={{ borderColor: colorHex }}>
         <h1 className="text-4xl font-semibold tracking-normal text-slate-900 font-display">{personalInfo.fullName || "Your Name"}</h1>
         <p className="text-sm font-medium tracking-widest uppercase mt-1.5 text-gray-500">{personalInfo.title || "Target Position"}</p>
         
@@ -397,7 +386,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isC
         {/* Experience */}
         {experience && experience.length > 0 && (
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-900 pb-1 mb-3">Professional Experience</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wider border-b pb-1 mb-3" style={{ color: colorHex, borderColor: colorHex }}>Professional Experience</h2>
             <div className="space-y-4">
               {experience.map(exp => (
                 <div key={exp.id}>
@@ -425,7 +414,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isC
         {/* Academic Publications */}
         {isCV && data.publications && data.publications.length > 0 && (
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-900 pb-1 mb-3">Publications</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wider border-b pb-1 mb-3" style={{ color: colorHex, borderColor: colorHex }}>Publications</h2>
             <div className="space-y-3">
               {data.publications.map(pub => (
                 <div key={pub.id} className="text-xs leading-relaxed">
@@ -440,7 +429,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isC
         {/* Academic Research */}
         {isCV && data.research && data.research.length > 0 && (
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-900 pb-1 mb-3">Research Experience</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wider border-b pb-1 mb-3" style={{ color: colorHex, borderColor: colorHex }}>Research Experience</h2>
             <div className="space-y-4">
               {data.research.map(res => (
                 <div key={res.id}>
@@ -461,7 +450,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isC
         {/* Projects */}
         {projects && projects.length > 0 && (
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-900 pb-1 mb-3">Key Projects</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wider border-b pb-1 mb-3" style={{ color: colorHex, borderColor: colorHex }}>Key Projects</h2>
             <div className="space-y-3">
               {projects.map(proj => (
                 <div key={proj.id}>
@@ -481,7 +470,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isC
         {/* Education */}
         {education && education.length > 0 && (
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-900 pb-1 mb-3">Education</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wider border-b pb-1 mb-3" style={{ color: colorHex, borderColor: colorHex }}>Education</h2>
             <div className="space-y-3">
               {education.map(edu => (
                 <div key={edu.id}>
@@ -502,7 +491,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isC
         {/* Academic Teaching */}
         {isCV && data.teaching && data.teaching.length > 0 && (
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-900 pb-1 mb-3">Teaching Experience</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wider border-b pb-1 mb-3" style={{ color: colorHex, borderColor: colorHex }}>Teaching Experience</h2>
             <div className="space-y-3">
               {data.teaching.map(t => (
                 <div key={t.id}>
@@ -521,7 +510,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isC
         {/* Academic Patents */}
         {isCV && data.patents && data.patents.length > 0 && (
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-900 pb-1 mb-3">Patents</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wider border-b pb-1 mb-3" style={{ color: colorHex, borderColor: colorHex }}>Patents</h2>
             <div className="space-y-2">
               {data.patents.map(p => (
                 <div key={p.id} className="text-xs">
@@ -540,7 +529,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isC
         {/* Skills */}
         {skills && skills.length > 0 && (
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-900 pb-1 mb-3">Skills Summary</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wider border-b pb-1 mb-3" style={{ color: colorHex, borderColor: colorHex }}>Skills Summary</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-xs text-slate-700">
               {Array.from(new Set(skills.map(s => s.category || "General"))).map(cat => (
                 <div key={cat} className="flex">
@@ -558,7 +547,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isC
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
           {certifications && certifications.length > 0 && (
             <div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-900 pb-1 mb-2">Certifications</h2>
+              <h2 className="text-sm font-bold uppercase tracking-wider border-b pb-1 mb-2" style={{ color: colorHex, borderColor: colorHex }}>Certifications</h2>
               <ul className="space-y-1 text-xs text-slate-600">
                 {certifications.map(c => (
                   <li key={c.id}>
@@ -571,7 +560,7 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isC
 
           {achievements && achievements.length > 0 && (
             <div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-900 pb-1 mb-2">Achievements</h2>
+              <h2 className="text-sm font-bold uppercase tracking-wider border-b pb-1 mb-2" style={{ color: colorHex, borderColor: colorHex }}>Achievements</h2>
               <ul className="space-y-1 text-xs text-slate-600">
                 {achievements.map(a => (
                   <li key={a.id}>
@@ -590,10 +579,11 @@ const ProfessionalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isC
 /* ========================================================================= */
 /* 3. ATS-FRIENDLY TEMPLATE                                                 */
 /* ========================================================================= */
-const AtsTemplate: React.FC<TemplateProps> = ({ data, isCV }) => {
+const AtsTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) => {
   const { personalInfo, education, experience, projects, skills, certifications, achievements } = data;
+  const colorHex = getColorHex(primaryColor);
   return (
-    <div className="resume-print-container p-8 bg-white text-black font-sans shadow-md border border-gray-100 rounded-lg min-h-[297mm] leading-relaxed">
+    <div className="resume-print-container p-8 bg-white text-zinc-800 font-sans shadow-md border border-gray-100 rounded-lg min-h-[297mm] leading-relaxed">
       {/* Name and Basic Details */}
       <div className="text-center pb-4">
         <h1 className="text-2xl font-bold uppercase tracking-tight">{personalInfo.fullName || "Your Name"}</h1>
@@ -612,7 +602,7 @@ const AtsTemplate: React.FC<TemplateProps> = ({ data, isCV }) => {
         {/* Summary */}
         {personalInfo.summary && (
           <div>
-            <h2 className="font-bold uppercase border-b border-black text-sm pb-0.5 mb-1">Professional Summary</h2>
+            <h2 className="font-bold uppercase border-b text-sm pb-0.5 mb-1" style={{ color: colorHex, borderColor: colorHex }}>Professional Summary</h2>
             <p className="text-gray-900">{personalInfo.summary}</p>
           </div>
         )}
@@ -620,7 +610,7 @@ const AtsTemplate: React.FC<TemplateProps> = ({ data, isCV }) => {
         {/* Skills */}
         {skills && skills.length > 0 && (
           <div>
-            <h2 className="font-bold uppercase border-b border-black text-sm pb-0.5 mb-1">Technical Skills</h2>
+            <h2 className="font-bold uppercase border-b text-sm pb-0.5 mb-1" style={{ color: colorHex, borderColor: colorHex }}>Technical Skills</h2>
             <div className="space-y-1">
               {Array.from(new Set(skills.map(s => s.category || "General"))).map(cat => (
                 <p key={cat}>
@@ -635,7 +625,7 @@ const AtsTemplate: React.FC<TemplateProps> = ({ data, isCV }) => {
         {/* Experience */}
         {experience && experience.length > 0 && (
           <div>
-            <h2 className="font-bold uppercase border-b border-black text-sm pb-0.5 mb-1">Professional Experience</h2>
+            <h2 className="font-bold uppercase border-b text-sm pb-0.5 mb-1" style={{ color: colorHex, borderColor: colorHex }}>Professional Experience</h2>
             <div className="space-y-3">
               {experience.map(exp => (
                 <div key={exp.id}>
@@ -663,7 +653,7 @@ const AtsTemplate: React.FC<TemplateProps> = ({ data, isCV }) => {
         {/* Academic Publications */}
         {isCV && data.publications && data.publications.length > 0 && (
           <div>
-            <h2 className="font-bold uppercase border-b border-black text-sm pb-0.5 mb-1">Publications</h2>
+            <h2 className="font-bold uppercase border-b text-sm pb-0.5 mb-1" style={{ color: colorHex, borderColor: colorHex }}>Publications</h2>
             <div className="space-y-1.5">
               {data.publications.map(pub => (
                 <p key={pub.id} className="text-gray-950">
@@ -677,7 +667,7 @@ const AtsTemplate: React.FC<TemplateProps> = ({ data, isCV }) => {
         {/* Projects */}
         {projects && projects.length > 0 && (
           <div>
-            <h2 className="font-bold uppercase border-b border-black text-sm pb-0.5 mb-1">Projects</h2>
+            <h2 className="font-bold uppercase border-b text-sm pb-0.5 mb-1" style={{ color: colorHex, borderColor: colorHex }}>Projects</h2>
             <div className="space-y-2">
               {projects.map(proj => (
                 <div key={proj.id}>
@@ -695,7 +685,7 @@ const AtsTemplate: React.FC<TemplateProps> = ({ data, isCV }) => {
         {/* Education */}
         {education && education.length > 0 && (
           <div>
-            <h2 className="font-bold uppercase border-b border-black text-sm pb-0.5 mb-1">Education</h2>
+            <h2 className="font-bold uppercase border-b text-sm pb-0.5 mb-1" style={{ color: colorHex, borderColor: colorHex }}>Education</h2>
             <div className="space-y-2">
               {education.map(edu => (
                 <div key={edu.id}>
@@ -716,7 +706,7 @@ const AtsTemplate: React.FC<TemplateProps> = ({ data, isCV }) => {
         {/* CV specific sections for ATS CV */}
         {isCV && data.teaching && data.teaching.length > 0 && (
           <div>
-            <h2 className="font-bold uppercase border-b border-black text-sm pb-0.5 mb-1">Teaching Experience</h2>
+            <h2 className="font-bold uppercase border-b text-sm pb-0.5 mb-1" style={{ color: colorHex, borderColor: colorHex }}>Teaching Experience</h2>
             <div className="space-y-2">
               {data.teaching.map(t => (
                 <div key={t.id}>
@@ -736,7 +726,7 @@ const AtsTemplate: React.FC<TemplateProps> = ({ data, isCV }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {certifications && certifications.length > 0 && (
             <div>
-              <h2 className="font-bold uppercase border-b border-black text-sm pb-0.5 mb-1">Certifications</h2>
+              <h2 className="font-bold uppercase border-b text-sm pb-0.5 mb-1" style={{ color: colorHex, borderColor: colorHex }}>Certifications</h2>
               <ul className="list-disc pl-4 space-y-0.5 text-gray-900">
                 {certifications.map(c => (
                   <li key={c.id}>
@@ -749,7 +739,7 @@ const AtsTemplate: React.FC<TemplateProps> = ({ data, isCV }) => {
 
           {achievements && achievements.length > 0 && (
             <div>
-              <h2 className="font-bold uppercase border-b border-black text-sm pb-0.5 mb-1">Awards & Achievements</h2>
+              <h2 className="font-bold uppercase border-b text-sm pb-0.5 mb-1" style={{ color: colorHex, borderColor: colorHex }}>Awards & Achievements</h2>
               <ul className="list-disc pl-4 space-y-0.5 text-gray-900">
                 {achievements.map(a => (
                   <li key={a.id}>
@@ -778,7 +768,7 @@ const MinimalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) 
       {/* Minimal Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-light tracking-wide text-zinc-900 font-display">{personalInfo.fullName || "Your Name"}</h1>
-        <p className="text-xs uppercase tracking-widest text-zinc-400 mt-1 font-semibold">{personalInfo.title || "Target Position"}</p>
+        <p className="text-xs uppercase tracking-widest mt-1 font-semibold" style={{ color: colorHex }}>{personalInfo.title || "Target Position"}</p>
         
         <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-zinc-500 mt-4 font-mono">
           {personalInfo.email && <span>{personalInfo.email}</span>}
@@ -790,7 +780,7 @@ const MinimalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) 
 
       <div className="space-y-8 text-xs">
         {personalInfo.summary && (
-          <p className="text-zinc-500 leading-relaxed font-light text-sm max-w-3xl border-l-2 pl-4 border-zinc-200">
+          <p className="text-zinc-600 leading-relaxed font-light text-sm max-w-3xl border-l-2 pl-4" style={{ borderColor: colorHex }}>
             {personalInfo.summary}
           </p>
         )}
@@ -798,7 +788,7 @@ const MinimalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) 
         {/* Experience */}
         {experience && experience.length > 0 && (
           <div>
-            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">Experience</h2>
+            <h2 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: colorHex }}>Experience</h2>
             <div className="space-y-6">
               {experience.map(exp => (
                 <div key={exp.id} className="grid grid-cols-1 md:grid-cols-4 gap-2">
@@ -823,7 +813,7 @@ const MinimalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) 
         {/* Publications */}
         {isCV && data.publications && data.publications.length > 0 && (
           <div>
-            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">Publications</h2>
+            <h2 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: colorHex }}>Publications</h2>
             <div className="space-y-4">
               {data.publications.map(pub => (
                 <div key={pub.id} className="grid grid-cols-1 md:grid-cols-4 gap-2">
@@ -841,7 +831,7 @@ const MinimalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) 
         {/* Projects */}
         {projects && projects.length > 0 && (
           <div>
-            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">Projects</h2>
+            <h2 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: colorHex }}>Projects</h2>
             <div className="space-y-4">
               {projects.map(proj => (
                 <div key={proj.id} className="grid grid-cols-1 md:grid-cols-4 gap-2">
@@ -861,7 +851,7 @@ const MinimalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) 
         {/* Education */}
         {education && education.length > 0 && (
           <div>
-            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">Education</h2>
+            <h2 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: colorHex }}>Education</h2>
             <div className="space-y-4">
               {education.map(edu => (
                 <div key={edu.id} className="grid grid-cols-1 md:grid-cols-4 gap-2">
@@ -881,10 +871,10 @@ const MinimalTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }) 
         {/* Skills */}
         {skills && skills.length > 0 && (
           <div>
-            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3">Skills</h2>
+            <h2 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: colorHex }}>Skills</h2>
             <div className="flex flex-wrap gap-2">
               {skills.map(s => (
-                <span key={s.id} className="px-2.5 py-1 border border-zinc-200 text-zinc-700 rounded text-xs">
+                <span key={s.id} className="px-2.5 py-1 border text-zinc-700 rounded text-xs font-medium" style={{ borderColor: colorHex }}>
                   {s.name}
                 </span>
               ))}
@@ -907,7 +897,7 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }
   return (
     <div className="resume-print-container p-12 bg-white text-stone-800 font-serif shadow-md border border-gray-100 rounded-lg min-h-[297mm]">
       {/* Executive Header Banner */}
-      <div className="border-b border-stone-300 pb-6 mb-6">
+      <div className="border-b pb-6 mb-6" style={{ borderColor: colorHex }}>
         <h1 className="text-3xl font-extrabold text-stone-900 font-display tracking-tight text-center sm:text-left">{personalInfo.fullName || "Your Name"}</h1>
         <div className="flex flex-col sm:flex-row justify-between items-center mt-2 gap-2">
           <p className="text-md italic font-sans" style={{ color: colorHex }}>{personalInfo.title || "Executive Target"}</p>
@@ -923,7 +913,7 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }
 
       {personalInfo.summary && (
         <div className="mb-6 font-sans">
-          <h2 className="text-xs uppercase font-bold tracking-wider text-stone-900 mb-2">Executive Summary</h2>
+          <h2 className="text-xs uppercase font-bold tracking-wider mb-2" style={{ color: colorHex }}>Executive Summary</h2>
           <p className="text-xs text-stone-600 leading-relaxed font-light">
             {personalInfo.summary}
           </p>
@@ -934,7 +924,7 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }
         {/* Experience */}
         {experience && experience.length > 0 && (
           <div>
-            <h2 className="text-xs uppercase font-bold tracking-wider text-stone-900 border-b border-stone-300 pb-1 mb-3">Professional Leadership</h2>
+            <h2 className="text-xs uppercase font-bold tracking-wider border-b pb-1 mb-3" style={{ color: colorHex, borderColor: colorHex }}>Professional Leadership</h2>
             <div className="space-y-4">
               {experience.map(exp => (
                 <div key={exp.id}>
@@ -959,7 +949,7 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }
         {/* Publications */}
         {isCV && data.publications && data.publications.length > 0 && (
           <div>
-            <h2 className="text-xs uppercase font-bold tracking-wider text-stone-900 border-b border-stone-300 pb-1 mb-3">Intellectual Contributions</h2>
+            <h2 className="text-xs uppercase font-bold tracking-wider border-b pb-1 mb-3" style={{ color: colorHex, borderColor: colorHex }}>Intellectual Contributions</h2>
             <div className="space-y-3">
               {data.publications.map(pub => (
                 <div key={pub.id} className="text-xs leading-relaxed">
@@ -973,7 +963,7 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }
         {/* Education */}
         {education && education.length > 0 && (
           <div>
-            <h2 className="text-xs uppercase font-bold tracking-wider text-stone-900 border-b border-stone-300 pb-1 mb-3">Education & Credentials</h2>
+            <h2 className="text-xs uppercase font-bold tracking-wider border-b pb-1 mb-3" style={{ color: colorHex, borderColor: colorHex }}>Education & Credentials</h2>
             <div className="space-y-3">
               {education.map(edu => (
                 <div key={edu.id}>
@@ -991,7 +981,7 @@ const ExecutiveTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV }
         {/* Core Competencies (Skills) */}
         {skills && skills.length > 0 && (
           <div>
-            <h2 className="text-xs uppercase font-bold tracking-wider text-stone-900 border-b border-stone-300 pb-1 mb-3">Core Competencies</h2>
+            <h2 className="text-xs uppercase font-bold tracking-wider border-b pb-1 mb-3" style={{ color: colorHex, borderColor: colorHex }}>Core Competencies</h2>
             <div className="flex flex-wrap gap-1.5">
               {skills.map(s => (
                 <span key={s.id} className="px-2.5 py-1 bg-stone-100 text-stone-800 rounded font-medium text-[10px]">
@@ -1017,7 +1007,7 @@ const SoftwareEngineerTemplate: React.FC<TemplateProps> = ({ data, primaryColor,
   return (
     <div className="resume-print-container p-8 bg-white text-slate-800 font-mono shadow-md border border-gray-100 rounded-lg min-h-[297mm] text-xs">
       {/* Header Styled like a code block */}
-      <div className="border-2 border-slate-800 p-4 mb-6 bg-slate-50">
+      <div className="border-2 p-4 mb-6 bg-slate-50" style={{ borderColor: colorHex }}>
         <h1 className="text-2xl font-bold text-slate-900 font-sans">{`const developer = { name: "${personalInfo.fullName || "Your Name"}" };`}</h1>
         <p className="text-xs mt-1.5 font-sans" style={{ color: colorHex }}>{`// ${personalInfo.title || "Software Engineer"}`}</p>
         
@@ -1035,7 +1025,7 @@ const SoftwareEngineerTemplate: React.FC<TemplateProps> = ({ data, primaryColor,
         <div className="md:col-span-1 space-y-6">
           {skills && skills.length > 0 && (
             <div>
-              <h2 className="text-xs font-bold border-b-2 border-slate-800 pb-1 mb-2 uppercase text-slate-900"># Technical Skills</h2>
+              <h2 className="text-xs font-bold border-b-2 pb-1 mb-2 uppercase" style={{ color: colorHex, borderColor: colorHex }}># Technical Skills</h2>
               <div className="space-y-3">
                 {Array.from(new Set(skills.map(s => s.category || "General"))).map(cat => (
                   <div key={cat}>
@@ -1055,7 +1045,7 @@ const SoftwareEngineerTemplate: React.FC<TemplateProps> = ({ data, primaryColor,
 
           {certifications && certifications.length > 0 && (
             <div>
-              <h2 className="text-xs font-bold border-b-2 border-slate-800 pb-1 mb-2 uppercase text-slate-900"># Certifications</h2>
+              <h2 className="text-xs font-bold border-b-2 pb-1 mb-2 uppercase" style={{ color: colorHex, borderColor: colorHex }}># Certifications</h2>
               <ul className="space-y-1.5 text-[10px]">
                 {certifications.map(c => (
                   <li key={c.id}>
@@ -1072,7 +1062,7 @@ const SoftwareEngineerTemplate: React.FC<TemplateProps> = ({ data, primaryColor,
         <div className="md:col-span-2 space-y-6">
           {experience && experience.length > 0 && (
             <div>
-              <h2 className="text-xs font-bold border-b-2 border-slate-800 pb-1 mb-3 uppercase text-slate-900"># Professional_Experience</h2>
+              <h2 className="text-xs font-bold border-b-2 pb-1 mb-3 uppercase" style={{ color: colorHex, borderColor: colorHex }}># Professional_Experience</h2>
               <div className="space-y-4">
                 {experience.map(exp => (
                   <div key={exp.id}>
@@ -1094,7 +1084,7 @@ const SoftwareEngineerTemplate: React.FC<TemplateProps> = ({ data, primaryColor,
 
           {projects && projects.length > 0 && (
             <div>
-              <h2 className="text-xs font-bold border-b-2 border-slate-800 pb-1 mb-3 uppercase text-slate-900"># Key_Projects</h2>
+              <h2 className="text-xs font-bold border-b-2 pb-1 mb-3 uppercase" style={{ color: colorHex, borderColor: colorHex }}># Key_Projects</h2>
               <div className="space-y-3">
                 {projects.map(proj => (
                   <div key={proj.id}>
@@ -1109,7 +1099,7 @@ const SoftwareEngineerTemplate: React.FC<TemplateProps> = ({ data, primaryColor,
 
           {education && education.length > 0 && (
             <div>
-              <h2 className="text-xs font-bold border-b-2 border-slate-800 pb-1 mb-2 uppercase text-slate-900"># Education</h2>
+              <h2 className="text-xs font-bold border-b-2 pb-1 mb-2 uppercase" style={{ color: colorHex, borderColor: colorHex }}># Education</h2>
               <div className="space-y-2">
                 {education.map(edu => (
                   <div key={edu.id}>
@@ -1139,23 +1129,23 @@ const DesignerTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV })
   const borderCol = getBorderColor(primaryColor);
 
   return (
-    <div className="resume-print-container p-8 sm:p-12 bg-zinc-950 text-zinc-300 font-sans shadow-md border border-zinc-800 rounded-lg min-h-[297mm]">
+    <div className="resume-print-container p-8 sm:p-12 bg-white text-zinc-800 font-sans shadow-md border border-gray-100 rounded-lg min-h-[297mm]">
       {/* Creative Header */}
       <div className="relative border-l-8 pl-6 mb-8 py-2" style={{ borderColor: colorHex }}>
-        <h1 className="text-4xl font-extrabold text-white font-display tracking-tight uppercase leading-none">{personalInfo.fullName || "Your Name"}</h1>
+        <h1 className="text-4xl font-extrabold text-zinc-900 font-display tracking-tight uppercase leading-none">{personalInfo.fullName || "Your Name"}</h1>
         <p className="text-sm font-semibold tracking-wider uppercase mt-2 font-display" style={{ color: colorHex }}>{personalInfo.title || "Creative Designer"}</p>
         
         <div className="flex flex-wrap gap-4 text-xs text-zinc-500 mt-4">
           {personalInfo.email && <span>{personalInfo.email}</span>}
           {personalInfo.phone && <span>{personalInfo.phone}</span>}
           {personalInfo.location && <span>{personalInfo.location}</span>}
-          {personalInfo.website && <a href={personalInfo.website} className="hover:text-white transition-colors">{personalInfo.website}</a>}
-          {personalInfo.linkedin && <a href={`https://${personalInfo.linkedin}`} className="hover:text-white transition-colors">LinkedIn</a>}
+          {personalInfo.website && <a href={personalInfo.website} className="hover:text-zinc-900 transition-colors">{personalInfo.website}</a>}
+          {personalInfo.linkedin && <a href={`https://${personalInfo.linkedin}`} className="hover:text-zinc-900 transition-colors">LinkedIn</a>}
         </div>
       </div>
 
       {personalInfo.summary && (
-        <p className="text-xs text-zinc-400 leading-relaxed font-light mb-8 max-w-4xl border-b border-zinc-800 pb-6">
+        <p className="text-xs text-zinc-600 leading-relaxed font-light mb-8 max-w-4xl border-b border-gray-200 pb-6">
           {personalInfo.summary}
         </p>
       )}
@@ -1165,19 +1155,19 @@ const DesignerTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV })
         <div className="md:col-span-2 space-y-8">
           {experience && experience.length > 0 && (
             <div>
-              <h2 className="text-xs font-extrabold uppercase tracking-widest text-white border-b border-zinc-800 pb-2 mb-4">Experience</h2>
+              <h2 className="text-xs font-extrabold uppercase tracking-widest border-b pb-2 mb-4" style={{ color: colorHex, borderColor: colorHex }}>Experience</h2>
               <div className="space-y-6">
                 {experience.map(exp => (
-                  <div key={exp.id} className="relative pl-4 border-l border-zinc-800">
+                  <div key={exp.id} className="relative pl-4 border-l border-gray-200">
                     {/* Circle marker */}
                     <span className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full" style={{ backgroundColor: colorHex }}></span>
                     <div className="flex justify-between items-baseline flex-wrap gap-2">
-                      <h3 className="font-bold text-white text-xs">{exp.position}</h3>
+                      <h3 className="font-bold text-zinc-900 text-xs">{exp.position}</h3>
                       <span className="text-[10px] text-zinc-500 font-mono">{exp.startDate} – {exp.current ? "Present" : exp.endDate}</span>
                     </div>
-                    <p className="text-[11px] text-zinc-400 mt-0.5">{exp.company} • {exp.location}</p>
+                    <p className="text-[11px] text-zinc-500 mt-0.5">{exp.company} • {exp.location}</p>
                     {exp.description && (
-                      <ul className="list-disc pl-4 space-y-1 text-xs text-zinc-400 leading-relaxed mt-2">
+                      <ul className="list-disc pl-4 space-y-1 text-xs text-zinc-600 leading-relaxed mt-2">
                         {exp.description.split("\n").map((b, i) => <li key={i}>{b.replace(/^[-*•\s]+/, "")}</li>)}
                       </ul>
                     )}
@@ -1189,19 +1179,19 @@ const DesignerTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV })
 
           {projects && projects.length > 0 && (
             <div>
-              <h2 className="text-xs font-extrabold uppercase tracking-widest text-white border-b border-zinc-800 pb-2 mb-4">Projects</h2>
+              <h2 className="text-xs font-extrabold uppercase tracking-widest border-b pb-2 mb-4" style={{ color: colorHex, borderColor: colorHex }}>Projects</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {projects.map(proj => (
-                  <div key={proj.id} className="p-3 bg-zinc-900/50 border border-zinc-800/80 rounded-lg hover:border-zinc-700 transition-colors">
-                    <h3 className="font-bold text-white text-xs flex justify-between">
+                  <div key={proj.id} className="p-3 bg-gray-50 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
+                    <h3 className="font-bold text-zinc-900 text-xs flex justify-between">
                       {proj.name}
                     </h3>
                     <div className="flex gap-1.5 flex-wrap mt-1">
                       {proj.technologies && proj.technologies.slice(0, 3).map((t, i) => (
-                        <span key={i} className="text-[9px] px-1 bg-zinc-800 text-zinc-400 font-semibold rounded">{t}</span>
+                        <span key={i} className="text-[9px] px-1 bg-gray-250 text-zinc-600 font-semibold rounded">{t}</span>
                       ))}
                     </div>
-                    <p className="text-[10px] text-zinc-400 mt-2 leading-relaxed">{proj.description}</p>
+                    <p className="text-[10px] text-zinc-600 mt-2 leading-relaxed">{proj.description}</p>
                   </div>
                 ))}
               </div>
@@ -1213,7 +1203,7 @@ const DesignerTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV })
         <div className="md:col-span-1 space-y-8">
           {skills && skills.length > 0 && (
             <div>
-              <h2 className="text-xs font-extrabold uppercase tracking-widest text-white border-b border-zinc-800 pb-2 mb-4">Skills</h2>
+              <h2 className="text-xs font-extrabold uppercase tracking-widest border-b pb-2 mb-4" style={{ color: colorHex, borderColor: colorHex }}>Skills</h2>
               <div className="space-y-4">
                 {Array.from(new Set(skills.map(s => s.category || "General"))).map(cat => (
                   <div key={cat}>
@@ -1222,11 +1212,11 @@ const DesignerTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV })
                       {skills.filter(s => (s.category || "General") === cat).map(s => (
                         <div key={s.id} className="text-xs">
                           <div className="flex justify-between text-[11px] mb-0.5">
-                            <span className="font-semibold text-zinc-300">{s.name}</span>
+                            <span className="font-semibold text-zinc-700">{s.name}</span>
                             <span className="text-zinc-500 font-mono text-[9px]">{s.level || "Intermediate"}</span>
                           </div>
                           {/* Visual skill progress bar */}
-                          <div className="w-full bg-zinc-900 h-1 rounded-full overflow-hidden">
+                          <div className="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
                             <div 
                               className="h-full rounded-full" 
                               style={{ 
@@ -1246,12 +1236,12 @@ const DesignerTemplate: React.FC<TemplateProps> = ({ data, primaryColor, isCV })
 
           {education && education.length > 0 && (
             <div>
-              <h2 className="text-xs font-extrabold uppercase tracking-widest text-white border-b border-zinc-800 pb-2 mb-4">Education</h2>
+              <h2 className="text-xs font-extrabold uppercase tracking-widest border-b pb-2 mb-4" style={{ color: colorHex, borderColor: colorHex }}>Education</h2>
               <div className="space-y-4">
                 {education.map(edu => (
                   <div key={edu.id} className="text-xs">
-                    <h3 className="font-bold text-white">{edu.school}</h3>
-                    <p className="text-zinc-400 mt-0.5">{edu.degree} in {edu.fieldOfStudy}</p>
+                    <h3 className="font-bold text-zinc-900">{edu.school}</h3>
+                    <p className="text-zinc-600 mt-0.5">{edu.degree} in {edu.fieldOfStudy}</p>
                     <p className="text-[10px] text-zinc-500 font-mono mt-1">{edu.startDate} – {edu.endDate}</p>
                   </div>
                 ))}

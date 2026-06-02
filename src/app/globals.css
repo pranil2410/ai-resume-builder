@@ -85,10 +85,8 @@ body {
   /* Hide all dashboard/builder elements during print */
   body {
     background: #ffffff !important;
-    color: #000000 !important;
-    font-size: 12pt;
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   /* Target everything to hide unless marked */
@@ -107,22 +105,21 @@ body {
     display: none !important;
   }
 
-  /* Make sure the page has clean dimensions */
+  /* Make sure the page has clean dimensions and no default margins */
   @page {
     size: A4 portrait;
-    margin: 15mm;
+    margin: 0 !important;
   }
 
-  /* Ensure resume container takes full print page layout */
+  /* Ensure resume container takes full print page layout without shifting styles */
   .resume-print-container {
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
-    padding: 0 !important;
     box-shadow: none !important;
-    background: transparent !important;
-    color: #000000 !important;
+    background: #ffffff !important;
     border: none !important;
+    border-radius: 0 !important;
   }
 
   /* Force background colors to print correctly (crucial for templates with styling) */

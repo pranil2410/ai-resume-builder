@@ -666,7 +666,7 @@ export default function Dashboard() {
                 <option value="minimal">Minimal Single Column</option>
                 <option value="executive">Executive Classic</option>
                 <option value="software-engineer">Software Engineer (Monospace)</option>
-                <option value="designer">Designer Dark Theme</option>
+                <option value="designer">Designer Premium (Light)</option>
               </select>
             </div>
 
