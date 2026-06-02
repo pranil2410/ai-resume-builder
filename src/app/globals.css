@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 5%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 263.4 90% 50.2%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 263.4 90% 50.2%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 263.4 90% 50.2%;
+  --radius: 0.75rem;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--card));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Glassmorphism utilities */
+.glass {
+  background: rgba(15, 15, 20, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-premium {
+  background: linear-gradient(135deg, rgba(20, 10, 35, 0.6) 0%, rgba(10, 10, 15, 0.8) 100%);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Pulse effects */
+.glow-pulse {
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+  animation: pulse-glow 2s infinite alternate;
+}
+
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
+  }
+  100% {
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
+  }
+}
+
+/* ---------------------------------------------------- */
+/* PRINT CSS STYLES - CRITICAL FOR RESUME EXPORT        */
+/* ---------------------------------------------------- */
+@media print {
+  /* Hide all dashboard/builder elements during print */
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 12pt;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Target everything to hide unless marked */
+  .no-print,
+  nav,
+  header,
+  footer,
+  aside,
+  button,
+  .editor-sidebar,
+  .assistant-chat,
+  .settings-btn,
+  .top-actions-bar,
+  .career-assistant-bubble,
+  .cover-letter-modal {
+    display: none !important;
+  }
+
+  /* Make sure the page has clean dimensions */
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+
+  /* Ensure resume container takes full print page layout */
+  .resume-print-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    color: #000000 !important;
+    border: none !important;
+  }
+
+  /* Force background colors to print correctly (crucial for templates with styling) */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Break page layout cleanly, avoid separating section titles from contents */
+  h1, h2, h3, .resume-section-title {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  
+  .resume-section-item, tr, p {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
