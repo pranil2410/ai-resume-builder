@@ -134,18 +134,45 @@ Output a JSON response in the following format:
 }
 Output ONLY valid JSON matching this schema.`;
 
-async function callGemini(apiKey: string, prompt: string, systemInstruction: string): Promise<string> {
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
-    generationConfig: {
-      responseMimeType: "application/json",
-    },
-    systemInstruction,
-  });
+async function retryWithBackoff<T>(fn: () => Promise<T>, retries = 3, delay = 1000): Promise<T> {
+  try {
+    return await fn();
+  } catch (err: any) {
+    const status = err?.status;
+    const message = err?.message || "";
+    const isTransient = 
+      status === 503 || 
+      status === 429 || 
+      message.includes("503") || 
+      message.includes("429") || 
+      message.includes("high demand") || 
+      message.includes("Quota exceeded") ||
+      message.includes("Resource has been exhausted") ||
+      message.includes("overloaded");
+    
+    if (retries > 0 && isTransient) {
+      console.warn(`Transient error encountered (${message}). Retrying in ${delay}ms... (Retries left: ${retries})`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return retryWithBackoff(fn, retries - 1, delay * 2);
+    }
+    throw err;
+  }
+}
 
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+async function callGemini(apiKey: string, prompt: string, systemInstruction: string): Promise<string> {
+  return retryWithBackoff(async () => {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      generationConfig: {
+        responseMimeType: "application/json",
+      },
+      systemInstruction,
+    });
+
+    const result = await model.generateContent(prompt);
+    return result.response.text();
+  });
 }
 
 async function callOpenAI(apiKey: string, prompt: string, systemInstruction: string): Promise<string> {
@@ -206,7 +233,7 @@ export const AIService = {
       if (config.provider === "gemini") {
         const genAI = new GoogleGenerativeAI(config.apiKey);
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-        const result = await model.generateContent(`${REWRITE_SYSTEM}\n\nPoint: "${bullet}"`);
+        const result = await retryWithBackoff(() => model.generateContent(`${REWRITE_SYSTEM}\n\nPoint: "${bullet}"`));
         return result.response.text().trim();
       } else {
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -571,7 +598,7 @@ ${JSON.stringify(resume)}`;
         });
         promptText += `\nCandidate's new question: ${message}\n\nAssistant:`;
 
-        const result = await model.generateContent(`${systemInstruction}\n\n${promptText}`);
+        const result = await retryWithBackoff(() => model.generateContent(`${systemInstruction}\n\n${promptText}`));
         return result.response.text().trim();
       } else {
         const messages = [
