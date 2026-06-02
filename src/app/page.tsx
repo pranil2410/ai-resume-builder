@@ -11,6 +11,8 @@ import { VersionManager } from "../components/VersionManager";
 import { CoverLetterModal } from "../components/CoverLetterModal";
 import { PortfolioPreview } from "../components/PortfolioPreview";
 import { OptimizationCenter } from "../components/OptimizationCenter";
+import { LandingPage } from "../components/LandingPage";
+import { Footer } from "../components/Footer";
 
 // PDF.js import
 import * as pdfjsLib from "pdfjs-dist";
@@ -36,13 +38,17 @@ import {
   HelpCircle,
   Linkedin,
   FileDown,
-  Gauge
+  Gauge,
+  Home
 } from "lucide-react";
 
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs`;
 
 export default function Dashboard() {
+  // 0. VIEW STATE
+  const [currentView, setCurrentView] = useState<"landing" | "builder">("landing");
+
   // 1. ACTIVE RESUME STATE
   const [resumeData, setResumeData] = useState<ResumeData>(getMockResumeData());
   const [activeVersionId, setActiveVersionId] = useState<string>("active");
@@ -402,143 +408,163 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#070709] text-zinc-300 font-sans flex flex-col antialiased">
-      {/* 1. TOP HEADER NAVIGATION BAR */}
-      <header className="no-print sticky top-0 z-40 bg-[#070709]/80 backdrop-blur-md border-b border-zinc-800/80 px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="bg-gradient-to-tr from-violet-600 to-indigo-600 p-2 rounded-xl text-white font-extrabold text-xs flex items-center justify-center shadow-lg shadow-violet-950/20">
-            <Sparkles className="w-5 h-5 animate-pulse" />
-          </div>
-          <div>
-            <h1 className="font-display font-extrabold text-white text-base tracking-wide flex items-center gap-1.5">
-              ANTIGRAVITY <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">RESUME BUILDER</span>
-            </h1>
-            <p className="text-[10px] text-zinc-500 font-mono tracking-widest uppercase">AI-Powered Career Suite</p>
-          </div>
-        </div>
-
-        {/* Global Controls */}
-        <div className="flex items-center gap-3.5">
-          {/* Color Palettes Accent selector */}
-          <div className="flex items-center gap-1.5 bg-zinc-900/60 border border-zinc-800/60 rounded-xl px-3 py-1.5">
-            <Palette className="w-4 h-4 text-zinc-500" />
-            <div className="flex gap-1">
-              {["violet", "indigo", "emerald", "rose", "amber", "sky"].map((col) => (
-                <button
-                  key={col}
-                  onClick={() => setPrimaryColor(col)}
-                  className={`w-3.5 h-3.5 rounded-full border transition-all ${
-                    primaryColor === col ? "border-white scale-110" : "border-transparent"
-                  }`}
-                  style={{
-                    backgroundColor:
-                      col === "violet"
-                        ? "rgb(139, 92, 246)"
-                        : col === "indigo"
-                        ? "rgb(99, 102, 241)"
-                        : col === "emerald"
-                        ? "rgb(16, 185, 129)"
-                        : col === "rose"
-                        ? "rgb(244, 63, 94)"
-                        : col === "amber"
-                        ? "rgb(245, 158, 11)"
-                        : "rgb(14, 165, 233)",
-                  }}
-                  title={`Accent: ${col}`}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Model indicator status */}
-          <div className="text-xs bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-xl flex items-center gap-2">
-            <span className={`w-1.5 h-1.5 rounded-full ${settings.selectedModel === "mock" ? "bg-amber-400" : "bg-emerald-400"}`} />
-            <span className="font-mono text-zinc-400 uppercase text-[10px] font-semibold">
-              Mode: {settings.selectedModel}
-            </span>
-          </div>
-
-          {/* Settings button */}
-          <button
-            onClick={() => setShowSettings(true)}
-            className="p-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-zinc-400 hover:text-zinc-200 transition-colors"
-            title="Configure API Keys"
-          >
-            <Settings className="w-4 h-4" />
-          </button>
-        </div>
-      </header>
-
-      {/* 2. MAIN SPLIT SCREEN PANEL CONTENT */}
-      <main className="flex-1 flex overflow-hidden">
-        {/* Left Side: Editor Sidebar Navigation and Dashboard Form Panels */}
-        <div className="no-print w-[46%] border-r border-zinc-800/80 flex bg-zinc-950/30 overflow-hidden">
-          {/* Vertical Navigation Bar */}
-          <div className="w-16 border-r border-zinc-900 flex flex-col items-center py-4 justify-between bg-zinc-950/60 shrink-0">
-            <div className="space-y-4 flex flex-col items-center w-full">
-              <button
-                onClick={() => setActiveTab("editor")}
-                className={`p-3 rounded-xl transition-all ${
-                  activeTab === "editor" ? "bg-violet-600/10 text-violet-400 border border-violet-500/20" : "text-zinc-500 hover:text-zinc-300"
-                }`}
-                title="Editor Panels"
-              >
-                <Layout className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setActiveTab("tailor")}
-                className={`p-3 rounded-xl transition-all ${
-                  activeTab === "tailor" ? "bg-violet-600/10 text-violet-400 border border-violet-500/20" : "text-zinc-500 hover:text-zinc-300"
-                }`}
-                title="Job Matcher"
-              >
-                <Briefcase className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setActiveTab("parse")}
-                className={`p-3 rounded-xl transition-all ${
-                  activeTab === "parse" ? "bg-violet-600/10 text-violet-400 border border-violet-500/20" : "text-zinc-500 hover:text-zinc-300"
-                }`}
-                title="PDF/LinkedIn Parser"
-              >
-                <Upload className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setActiveTab("history")}
-                className={`p-3 rounded-xl transition-all ${
-                  activeTab === "history" ? "bg-violet-600/10 text-violet-400 border border-violet-500/20" : "text-zinc-500 hover:text-zinc-300"
-                }`}
-                title="Version Control"
-              >
-                <Layers className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setActiveTab("optimization")}
-                className={`p-3 rounded-xl transition-all ${
-                  activeTab === "optimization" ? "bg-violet-600/10 text-violet-400 border border-violet-500/20" : "text-zinc-500 hover:text-zinc-300"
-                }`}
-                title="AI Optimization Center"
-              >
-                <Gauge className="w-5 h-5" />
-              </button>
+      {currentView === "landing" ? (
+        <LandingPage
+          onBuildResume={() => {
+            setCurrentView("builder");
+            setActiveTab("editor");
+          }}
+          onTryOptimizer={() => {
+            setCurrentView("builder");
+            setActiveTab("optimization");
+          }}
+        />
+      ) : (
+        <>
+          {/* 1. TOP HEADER NAVIGATION BAR */}
+          <header className="no-print sticky top-0 z-40 bg-[#070709]/80 backdrop-blur-md border-b border-zinc-800/80 px-6 h-16 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-3 cursor-pointer select-none" onClick={() => setCurrentView("landing")}>
+              <div className="bg-gradient-to-tr from-violet-600 to-indigo-600 p-2 rounded-xl text-white font-extrabold text-xs flex items-center justify-center shadow-lg shadow-violet-950/20">
+                <Sparkles className="w-5 h-5 animate-pulse" />
+              </div>
+              <div>
+                <h1 className="font-display font-extrabold text-white text-base tracking-wide flex items-center gap-1.5">
+                  AI RESUME & CV BUILDER
+                </h1>
+                <p className="text-[9px] text-violet-400 font-mono tracking-widest uppercase font-bold">Powered by AI</p>
+              </div>
             </div>
 
-            <div className="space-y-3 flex flex-col items-center">
+            {/* Global Controls */}
+            <div className="flex items-center gap-3.5">
+              {/* Color Palettes Accent selector */}
+              <div className="flex items-center gap-1.5 bg-zinc-900/60 border border-zinc-800/60 rounded-xl px-3 py-1.5">
+                <Palette className="w-4 h-4 text-zinc-500" />
+                <div className="flex gap-1">
+                  {["violet", "indigo", "emerald", "rose", "amber", "sky"].map((col) => (
+                    <button
+                      key={col}
+                      onClick={() => setPrimaryColor(col)}
+                      className={`w-3.5 h-3.5 rounded-full border transition-all ${
+                        primaryColor === col ? "border-white scale-110" : "border-transparent"
+                      }`}
+                      style={{
+                        backgroundColor:
+                          col === "violet"
+                            ? "rgb(139, 92, 246)"
+                            : col === "indigo"
+                            ? "rgb(99, 102, 241)"
+                            : col === "emerald"
+                            ? "rgb(16, 185, 129)"
+                            : col === "rose"
+                            ? "rgb(244, 63, 94)"
+                            : col === "amber"
+                            ? "rgb(245, 158, 11)"
+                            : "rgb(14, 165, 233)",
+                      }}
+                      title={`Accent: ${col}`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Model indicator status */}
+              <div className="text-xs bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-xl flex items-center gap-2">
+                <span className={`w-1.5 h-1.5 rounded-full ${settings.selectedModel === "mock" ? "bg-amber-400" : "bg-emerald-400"}`} />
+                <span className="font-mono text-zinc-400 uppercase text-[10px] font-semibold">
+                  Mode: {settings.selectedModel}
+                </span>
+              </div>
+
+              {/* Settings button */}
               <button
-                onClick={() => setShowCoverLetter(true)}
-                className="p-2.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
-                title="Cover Letters"
+                onClick={() => setShowSettings(true)}
+                className="p-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-zinc-400 hover:text-zinc-200 transition-colors"
+                title="Configure API Keys"
               >
-                <FileText className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setShowPortfolio(true)}
-                className="p-2.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
-                title="Portfolio Website"
-              >
-                <Globe className="w-4 h-4" />
+                <Settings className="w-4 h-4" />
               </button>
             </div>
-          </div>
+          </header>
+
+          {/* 2. MAIN SPLIT SCREEN PANEL CONTENT */}
+          <main className="flex-1 flex overflow-hidden">
+            {/* Left Side: Editor Sidebar Navigation and Dashboard Form Panels */}
+            <div className="no-print w-[46%] border-r border-zinc-800/80 flex bg-zinc-950/30 overflow-hidden">
+              {/* Vertical Navigation Bar */}
+              <div className="w-16 border-r border-zinc-900 flex flex-col items-center py-4 justify-between bg-zinc-950/60 shrink-0">
+                <div className="space-y-4 flex flex-col items-center w-full">
+                  <button
+                    onClick={() => setCurrentView("landing")}
+                    className="p-3 rounded-xl transition-all text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50"
+                    title="Go to Home Page"
+                  >
+                    <Home className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("editor")}
+                    className={`p-3 rounded-xl transition-all ${
+                      activeTab === "editor" ? "bg-violet-600/10 text-violet-400 border border-violet-500/20" : "text-zinc-500 hover:text-zinc-300"
+                    }`}
+                    title="Editor Panels"
+                  >
+                    <Layout className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("tailor")}
+                    className={`p-3 rounded-xl transition-all ${
+                      activeTab === "tailor" ? "bg-violet-600/10 text-violet-400 border border-violet-500/20" : "text-zinc-500 hover:text-zinc-300"
+                    }`}
+                    title="Job Matcher"
+                  >
+                    <Briefcase className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("parse")}
+                    className={`p-3 rounded-xl transition-all ${
+                      activeTab === "parse" ? "bg-violet-600/10 text-violet-400 border border-violet-500/20" : "text-zinc-500 hover:text-zinc-300"
+                    }`}
+                    title="PDF/LinkedIn Parser"
+                  >
+                    <Upload className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("history")}
+                    className={`p-3 rounded-xl transition-all ${
+                      activeTab === "history" ? "bg-violet-600/10 text-violet-400 border border-violet-500/20" : "text-zinc-500 hover:text-zinc-300"
+                    }`}
+                    title="Version Control"
+                  >
+                    <Layers className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("optimization")}
+                    className={`p-3 rounded-xl transition-all ${
+                      activeTab === "optimization" ? "bg-violet-600/10 text-violet-400 border border-violet-500/20" : "text-zinc-500 hover:text-zinc-300"
+                    }`}
+                    title="AI Optimization Center"
+                  >
+                    <Gauge className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-3 flex flex-col items-center">
+                  <button
+                    onClick={() => setShowCoverLetter(true)}
+                    className="p-2.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
+                    title="Cover Letters"
+                  >
+                    <FileText className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setShowPortfolio(true)}
+                    className="p-2.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
+                    title="Portfolio Website"
+                  >
+                    <Globe className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
 
           {/* Active Navigation Panel Drawer */}
           <div className="flex-1 flex flex-col overflow-hidden p-4">
@@ -811,6 +837,11 @@ export default function Dashboard() {
         onClose={() => setShowPortfolio(false)}
         resumeData={resumeData}
       />
-    </div>
+
+      {/* 7. GLOBAL FOOTER */}
+      <Footer />
+    </>
+  )}
+</div>
   );
 }
