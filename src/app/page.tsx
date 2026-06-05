@@ -81,6 +81,7 @@ export default function Dashboard() {
   const [showPortfolio, setShowPortfolio] = useState(false);
   const [isConvertingCV, setIsConvertingCV] = useState(false);
   const [optSubTab, setOptSubTab] = useState<"jd" | "role" | "hybrid">("jd");
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
 
   // LOAD LOCALS ON MOUNT
   useEffect(() => {
@@ -439,6 +440,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-[#070709] text-zinc-300 font-sans flex flex-col antialiased">
       {currentView === "landing" && (
         <LandingPage
+          onOpenAssistant={() => setIsAssistantOpen(true)}
           onNavigate={(view, options) => {
             setCurrentView(view);
             if (view === "builder") {
@@ -1198,6 +1200,28 @@ export default function Dashboard() {
         resumeData={resumeData}
         selectedModel={settings.selectedModel}
         apiKey={settings.selectedModel === "gemini" ? settings.geminiApiKey : settings.openAiApiKey}
+        isOpen={isAssistantOpen}
+        setIsOpen={setIsAssistantOpen}
+        onNavigate={(section) => {
+          if (section === "editor") {
+            setCurrentView("builder");
+            setActiveTab("editor");
+          } else if (section === "cover_letter") {
+            setCurrentView("cover-letter");
+          } else if (section === "portfolio") {
+            setCurrentView("portfolio");
+          } else if (section === "parser") {
+            setCurrentView("parser");
+          } else if (section === "export") {
+            setCurrentView("builder");
+            setTimeout(() => {
+              window.print();
+            }, 300);
+          } else if (section === "ats_score") {
+            setCurrentView("optimizer");
+            setOptSubTab("jd");
+          }
+        }}
       />
 
       {/* 5. COVER LETTER MODAL */}

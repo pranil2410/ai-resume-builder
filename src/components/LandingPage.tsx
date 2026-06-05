@@ -28,9 +28,10 @@ interface LandingPageProps {
       optimizationTab?: "jd" | "role" | "hybrid";
     }
   ) => void;
+  onOpenAssistant: () => void;
 }
 
-export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
+export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate, onOpenAssistant }) => {
   return (
     <div className="flex-1 flex flex-col bg-[#070709] text-zinc-300 overflow-y-auto scrollbar-thin select-none">
       {/* 1. TOP NAVBAR */}
@@ -47,13 +48,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        <button
-          onClick={() => onNavigate("builder")}
-          className="px-4 py-2 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-200 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shadow-md"
-        >
-          Launch Editor
-          <ArrowRight className="w-3.5 h-3.5 text-violet-400" />
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onOpenAssistant}
+            className="px-4 py-2 bg-violet-650/10 border border-violet-500/20 hover:bg-violet-650/20 text-violet-400 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shadow-md"
+          >
+            <Bot className="w-3.5 h-3.5 text-violet-400" />
+            AI Career Coach
+          </button>
+          <button
+            onClick={() => onNavigate("builder")}
+            className="px-4 py-2 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-200 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shadow-md"
+          >
+            Launch Editor
+            <ArrowRight className="w-3.5 h-3.5 text-violet-400" />
+          </button>
+        </div>
       </header>
 
       {/* 2. HERO SECTION */}
@@ -332,6 +342,23 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
               </div>
               <button onClick={() => onNavigate("builder")} className="mt-6 text-xs text-violet-400 hover:text-violet-300 font-bold flex items-center gap-1 w-fit group/btn">
                 Export Options
+                <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
+              </button>
+            </div>
+
+            {/* Feature 11 */}
+            <div className="bg-zinc-950/40 border border-zinc-850/80 hover:border-violet-500/30 hover:bg-zinc-900/30 p-6 rounded-2xl transition-all duration-300 shadow-md group flex flex-col justify-between">
+              <div>
+                <div className="p-3 bg-violet-600/10 text-violet-400 rounded-xl w-fit group-hover:scale-110 transition-transform">
+                  <Bot className="w-5 h-5" />
+                </div>
+                <h4 className="text-md font-bold text-white mt-5 font-display">11. AI Career Assistant</h4>
+                <p className="text-xs text-zinc-400 mt-2.5 leading-relaxed">
+                  Chat with our embedded AI career coach to navigate the app, optimize experience bullets, and get career advice.
+                </p>
+              </div>
+              <button onClick={onOpenAssistant} className="mt-6 text-xs text-violet-400 hover:text-violet-300 font-bold flex items-center gap-1 w-fit group/btn">
+                Chat with Assistant
                 <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
               </button>
             </div>

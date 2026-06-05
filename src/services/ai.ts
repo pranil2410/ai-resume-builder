@@ -573,19 +573,63 @@ ${resume.personalInfo.email || ""}`;
     if (config.provider === "mock" || !config.apiKey) {
       await new Promise((res) => setTimeout(res, 800));
       const msg = message.toLowerCase();
-      if (msg.includes("improve")) {
-        return "Based on your resume, you can improve by: \n1. Quantifying achievements with metrics (e.g., 'improved performance by 20%').\n2. Consolidating similar skill listings.\n3. Adding certifications related to cloud deployment (AWS/Azure).";
-      } else if (msg.includes("skill")) {
-        return "Given your background, I highly recommend learning:\n- **TypeScript** (industry standard for type safety)\n- **Docker & CI/CD Pipelines** (boosts your developer profile)\n- **Next.js App Router & Server Actions** (for cutting edge web applications)";
-      } else if (msg.includes("suitable") || msg.includes("fit")) {
-        return "You have a solid foundation! You are highly suitable for junior to mid-level roles in Software Engineering. To target senior positions, focus on leadership, systems design, and cloud deployments.";
+
+      // Check section intents first
+      if (msg.includes("edit") || msg.includes("builder") || msg.includes("personal info") || msg.includes("work experience") || msg.includes("education") || msg.includes("skills") || msg.includes("projects") || msg.includes("certifications") || msg.includes("experience")) {
+        return "I will take you to the Resume Editor so you can edit your details. [NAVIGATE:editor]";
       }
-      return `Thank you for asking! As your career coach, I reviewed your resume for "${resume.personalInfo.title || "candidate"}". I recommend polishing your projects section and ensuring your experience highlights active achievements rather than passive task descriptions. Do you have any specific job description in mind?`;
+      if (msg.includes("cover letter") || msg.includes("coverletter") || msg.includes("letter")) {
+        return "I'll take you to the Cover Letter tool where you can generate one tailored to that role. [NAVIGATE:cover_letter]";
+      }
+      if (msg.includes("portfolio") || msg.includes("website") || msg.includes("personal site")) {
+        return "Sure! I will redirect you to the Portfolio Builder to auto-generate your personal site. [NAVIGATE:portfolio]";
+      }
+      if (msg.includes("parser") || msg.includes("upload") || msg.includes("import") || msg.includes("extract")) {
+        return "No problem! I will take you to the Resume Parser where you can upload and extract your document. [NAVIGATE:parser]";
+      }
+      if (msg.includes("export") || msg.includes("download") || msg.includes("pdf") || msg.includes("docx") || msg.includes("txt")) {
+        return "I will navigate you to the export options where you can download your resume in various formats. [NAVIGATE:export]";
+      }
+      if (msg.includes("ats") || msg.includes("score") || msg.includes("keyword") || msg.includes("compatibility") || msg.includes("optimize")) {
+        return "Sure thing! I will redirect you to the ATS Score Analyzer to check your resume compatibility. [NAVIGATE:ats_score]";
+      }
+
+      // General career questions
+      if (msg.includes("improve")) {
+        return "To improve your resume, focus on adding quantified achievements and cloud certifications. Ensure your bullet points emphasize the results of your actions.";
+      }
+      if (msg.includes("skill")) {
+        return "I highly suggest learning TypeScript, Next.js, and cloud deployment pipelines. These skills are highly sought after by recruiters today.";
+      }
+      if (msg.includes("suitable") || msg.includes("fit") || msg.includes("role") || msg.includes("job")) {
+        return "You have a solid background for junior to mid-level engineering roles. Polishing your system design skills will make you more suitable for senior tracks.";
+      }
+
+      // Clarifying question if unclear
+      return "Could you please clarify if you would like to edit your resume, optimize its ATS score, or build a portfolio?";
     }
 
-    const systemInstruction = `You are a supportive, expert AI Career Assistant and HR Recruiter. You are advising a candidate based on their resume. Answer their questions clearly and constructively. Give concrete action items.
-RESUME OF THE CANDIDATE:
-${JSON.stringify(resume)}`;
+    const systemInstruction = `You are a helpful AI assistant embedded in an AI Resume & CV Builder web app. Your job is to understand what the user wants to do and guide them to the right section of the app.
+
+The app has these sections:
+- Resume Editor: edit personal info, work experience, education, skills, projects, certifications. (Navigate using: [NAVIGATE:editor])
+- Cover Letter: AI-generate a tailored cover letter for a specific job. (Navigate using: [NAVIGATE:cover_letter])
+- Portfolio Builder: auto-generate a personal portfolio website from resume data. (Navigate using: [NAVIGATE:portfolio])
+- Resume Parser: upload an existing resume PDF/DOCX to extract and import data. (Navigate using: [NAVIGATE:parser])
+- Export: download the resume as PDF, DOCX, or TXT. (Navigate using: [NAVIGATE:export])
+- ATS Score: check resume keyword match and ATS compatibility. (Navigate using: [NAVIGATE:ats_score])
+
+Candidate's Resume Data:
+${JSON.stringify(resume)}
+
+Strict Behavior Rules:
+1. Always respond in exactly 1-2 short, friendly sentences.
+2. If the user's message maps to a section above, confirm what they want, tell them you are redirecting them, and end your reply with exactly this tag: [NAVIGATE:section_name] (where section_name is one of: editor, cover_letter, portfolio, parser, export, ats_score).
+   Example: "Sure! I'll take you to the Cover Letter tool where you can generate one tailored to that role. [NAVIGATE:cover_letter]"
+3. If the user asks a general resume/career question, answer briefly and helpfully without navigating. DO NOT include any NAVIGATE tags.
+4. If the intent is unclear, ask one short clarifying question. DO NOT include any NAVIGATE tags.
+5. Never use markdown formatting in your replies. Use plain text only (no asterisks, no headers, no bullet points, no markdown link syntax).
+6. Do not mention you are Gemini, OpenAI, ChatGPT, or any underlying model. You are the Resume Assistant.`;
 
     try {
       if (config.provider === "gemini") {
@@ -624,7 +668,7 @@ ${JSON.stringify(resume)}`;
       }
     } catch (err) {
       console.error("Career chat failed, fallback to mock response", err);
-      return "I'm having trouble connecting to the AI brain right now. Based on your profile, I suggest checking if your skills section lists your primary technologies first!";
+      return "I'm having trouble connecting to my AI processor right now. Would you like me to take you to the Resume Editor instead? [NAVIGATE:editor]";
     }
   },
 

@@ -7,6 +7,9 @@ interface CareerAssistantProps {
   resumeData: ResumeData;
   selectedModel: "gemini" | "openai" | "mock";
   apiKey: string;
+  onNavigate?: (section: string) => void;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
 interface ChatMessage {
@@ -18,8 +21,10 @@ export const CareerAssistant: React.FC<CareerAssistantProps> = ({
   resumeData,
   selectedModel,
   apiKey,
+  onNavigate,
+  isOpen,
+  setIsOpen,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
@@ -63,7 +68,19 @@ export const CareerAssistant: React.FC<CareerAssistantProps> = ({
         { apiKey, provider: selectedModel }
       );
 
-      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+      const navigateRegex = /\[NAVIGATE:(\w+)\]/;
+      const match = reply.match(navigateRegex);
+      let cleanReply = reply;
+
+      if (match) {
+        const section = match[1];
+        cleanReply = reply.replace(navigateRegex, "").trim();
+        if (onNavigate) {
+          onNavigate(section);
+        }
+      }
+
+      setMessages((prev) => [...prev, { role: "assistant", content: cleanReply }]);
     } catch (err) {
       console.error(err);
       setMessages((prev) => [
