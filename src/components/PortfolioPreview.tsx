@@ -5,14 +5,16 @@ import confetti from "canvas-confetti";
 
 interface PortfolioPreviewProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   resumeData: ResumeData;
+  isInline?: boolean;
 }
 
 export const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({
   isOpen,
   onClose,
   resumeData,
+  isInline = false,
 }) => {
   const [copiedCode, setCopiedCode] = useState(false);
   const [contactName, setContactName] = useState("");
@@ -20,7 +22,7 @@ export const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({
   const [contactMessage, setContactMessage] = useState("");
   const [contactSubmitted, setContactSubmitted] = useState(false);
 
-  if (!isOpen) return null;
+  if (!isOpen && !isInline) return null;
 
   const { personalInfo, education, experience, projects, skills } = resumeData;
 
@@ -257,9 +259,8 @@ export const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({
     });
   };
 
-  return (
-    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="w-full max-w-6xl h-[90vh] bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden flex flex-col shadow-2xl">
+  const innerContent = (
+    <div className={`w-full ${isInline ? "h-full flex-1" : "max-w-6xl h-[90vh]"} bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden flex flex-col shadow-2xl`}>
         {/* Header */}
         <div className="p-4 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -286,13 +287,15 @@ export const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({
               <Download className="w-3.5 h-3.5" />
               Download HTML Page
             </button>
+            {onClose && (
             <button
               onClick={onClose}
               className="text-zinc-400 hover:text-zinc-200 transition-colors p-1.5 bg-zinc-800/80 rounded-lg ml-2"
             >
               <X className="w-4.5 h-4.5" />
             </button>
-          </div>
+          )}
+        </div>
         </div>
 
         {/* Inner layout split - Preview / Code */}
@@ -487,6 +490,15 @@ export const PortfolioPreview: React.FC<PortfolioPreviewProps> = ({
           </div>
         </div>
       </div>
+  );
+
+  if (isInline) {
+    return innerContent;
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+      {innerContent}
     </div>
   );
 };

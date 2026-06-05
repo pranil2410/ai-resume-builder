@@ -40,7 +40,8 @@ import {
   FileDown,
   Gauge,
   Home,
-  BookOpen
+  BookOpen,
+  ArrowRight
 } from "lucide-react";
 
 // Configure PDF.js worker
@@ -48,7 +49,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs
 
 export default function Dashboard() {
   // 0. VIEW STATE
-  const [currentView, setCurrentView] = useState<"landing" | "builder">("landing");
+  const [currentView, setCurrentView] = useState<"landing" | "builder" | "parser" | "optimizer" | "cover-letter" | "portfolio">("landing");
 
   // 1. ACTIVE RESUME STATE
   const [resumeData, setResumeData] = useState<ResumeData>(getMockResumeData());
@@ -436,37 +437,340 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#070709] text-zinc-300 font-sans flex flex-col antialiased">
-      {currentView === "landing" ? (
+      {currentView === "landing" && (
         <LandingPage
-          onNavigate={(tab, options) => {
-            setCurrentView("builder");
-            setActiveTab(tab);
-            if (options?.isCV !== undefined) {
-              setIsCV(options.isCV);
-              if (options.isCV) {
-                updateResumeData({
-                  ...resumeData,
-                  publications: resumeData.publications || [],
-                  research: resumeData.research || [],
-                  teaching: resumeData.teaching || [],
-                  patents: resumeData.patents || [],
-                  awards: resumeData.awards || [],
-                  conferences: resumeData.conferences || [],
-                });
+          onNavigate={(view, options) => {
+            setCurrentView(view);
+            if (view === "builder") {
+              setActiveTab("editor");
+              if (options?.isCV !== undefined) {
+                setIsCV(options.isCV);
+                if (options.isCV) {
+                  updateResumeData({
+                    ...resumeData,
+                    publications: resumeData.publications || [],
+                    research: resumeData.research || [],
+                    teaching: resumeData.teaching || [],
+                    patents: resumeData.patents || [],
+                    awards: resumeData.awards || [],
+                    conferences: resumeData.conferences || [],
+                  });
+                }
               }
-            }
-            if (options?.showCoverLetter !== undefined) {
-              setShowCoverLetter(options.showCoverLetter);
-            }
-            if (options?.showPortfolio !== undefined) {
-              setShowPortfolio(options.showPortfolio);
-            }
-            if (options?.optimizationTab !== undefined) {
-              setOptSubTab(options.optimizationTab);
+            } else if (view === "optimizer") {
+              if (options?.optimizationTab !== undefined) {
+                setOptSubTab(options.optimizationTab);
+              }
             }
           }}
         />
-      ) : (
+      )}
+
+      {currentView === "parser" && (
+        <>
+          <header className="sticky top-0 z-40 bg-[#070709]/80 backdrop-blur-md border-b border-zinc-800/80 px-6 h-16 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-3 cursor-pointer select-none" onClick={() => setCurrentView("landing")}>
+              <div className="bg-gradient-to-tr from-violet-600 to-indigo-600 p-2 rounded-xl text-white font-extrabold text-xs flex items-center justify-center">
+                <Upload className="w-5 h-5 animate-pulse" />
+              </div>
+              <div>
+                <h1 className="font-display font-extrabold text-white text-base tracking-wide uppercase">AI Resume Parser</h1>
+                <p className="text-[9px] text-violet-400 font-mono tracking-widest uppercase font-bold">Extraction Suite</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setCurrentView("landing")}
+              className="px-4 py-2 bg-zinc-900 border border-zinc-850 hover:bg-zinc-850 text-zinc-300 hover:text-white rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+            >
+              ← Back to Home
+            </button>
+          </header>
+
+          <main className="flex-1 flex overflow-hidden p-6 gap-6">
+            {/* Left panel: Upload options */}
+            <div className="w-1/2 bg-[#0c0c0e] border border-zinc-800/85 rounded-2xl p-6 space-y-6 flex flex-col justify-between overflow-y-auto scrollbar-thin">
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 border-b border-zinc-850 pb-3">
+                  <Upload className="w-5 h-5 text-violet-400" />
+                  <h3 className="font-display font-semibold text-sm text-zinc-200">UPLOAD DOCUMENT</h3>
+                </div>
+
+                {/* Uploader dropzone */}
+                <div className="border-2 border-dashed border-zinc-800 bg-zinc-900/10 rounded-xl p-8 text-center hover:border-violet-500/40 transition-all relative">
+                  <input
+                    type="file"
+                    accept=".pdf,.txt"
+                    onChange={handleFileUpload}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                  <div className="flex flex-col items-center justify-center gap-3 text-zinc-500">
+                    <FileDown className="w-12 h-12 text-zinc-650" />
+                    <p className="text-sm font-semibold text-zinc-300">Drag or Upload PDF / Text Resume</p>
+                    <p className="text-xs text-zinc-500">AI parses contact data, experience details, and skill sets automatically</p>
+                  </div>
+                </div>
+
+                {/* Plain text input alternative */}
+                <div className="space-y-2.5">
+                  <label className="text-xs font-semibold text-zinc-400 flex items-center gap-1.5">
+                    <Import className="w-3.5 h-3.5 text-zinc-500" />
+                    LinkedIn profile or plain text import
+                  </label>
+                  <textarea
+                    value={rawTextImport}
+                    onChange={(e) => setRawTextImport(e.target.value)}
+                    className="w-full bg-zinc-900/40 border border-zinc-850 rounded-xl p-3 text-xs text-zinc-200 h-32 resize-none font-sans focus:outline-none focus:border-violet-500"
+                    placeholder="Paste parsed LinkedIn PDF text export or standard clipboard resume content..."
+                  />
+                  <button
+                    onClick={async () => {
+                      if (!rawTextImport.trim()) return;
+                      setIsParsing(true);
+                      try {
+                        const parsedData = await AIService.parseResume(rawTextImport, {
+                          apiKey: settings.selectedModel === "gemini" ? settings.geminiApiKey : settings.openAiApiKey,
+                          provider: settings.selectedModel,
+                        });
+                        if (parsedData.personalInfo) {
+                          updateResumeData(parsedData as ResumeData);
+                          alert("Resume parsed successfully!");
+                        } else {
+                          throw new Error("AI parser failed to extract structure.");
+                        }
+                      } catch (err: any) {
+                        alert(`Parsing failed: ${err.message || "Please check API configurations."}`);
+                      } finally {
+                        setIsParsing(false);
+                      }
+                    }}
+                    disabled={isParsing || !rawTextImport.trim()}
+                    className="w-full py-2.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-855 hover:text-white rounded-lg text-xs font-semibold transition-all disabled:opacity-40"
+                  >
+                    {isParsing ? "Extracting..." : "Parse Plain Text"}
+                  </button>
+                </div>
+              </div>
+
+              {/* API settings info */}
+              <div className="p-3.5 bg-zinc-900/50 border border-zinc-850 rounded-xl text-[10px] text-zinc-500 leading-normal flex items-start gap-2 select-none">
+                <Sparkles className="w-4 h-4 text-violet-400 shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-semibold text-zinc-400 block mb-0.5">Gemini Extraction engine active</span>
+                  Ensure you have a valid Gemini API Key configured in your settings if you are using AI mode instead of the offline mock data generator.
+                </div>
+              </div>
+            </div>
+
+            {/* Right panel: Live Preview of Parsed State */}
+            <div className="w-1/2 bg-[#0c0c0e] border border-zinc-800/85 rounded-2xl p-6 flex flex-col justify-between overflow-y-auto scrollbar-thin">
+              <div className="space-y-4 overflow-hidden flex flex-col flex-1">
+                <div className="flex items-center justify-between border-b border-zinc-850 pb-3 shrink-0">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-violet-400" />
+                    <h3 className="font-display font-semibold text-sm text-zinc-200">EXTRACTED PROFILE PREVIEW</h3>
+                  </div>
+                  <span className="text-[10px] bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-mono font-bold select-none">
+                    Ready to Load
+                  </span>
+                </div>
+
+                {/* Parsed Fields Preview */}
+                <div className="flex-1 overflow-y-auto space-y-4 pr-1 scrollbar-thin text-xs">
+                  {/* Contact info cards */}
+                  <div className="bg-zinc-900/30 border border-zinc-850 p-4 rounded-xl space-y-3">
+                    <h4 className="font-bold text-white text-xs tracking-wide border-b border-zinc-800 pb-1.5">Personal details</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <span className="text-[10px] text-zinc-500 block uppercase font-semibold">Full Name</span>
+                        <span className="text-zinc-200 font-semibold">{resumeData.personalInfo.fullName || "—"}</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-zinc-500 block uppercase font-semibold">Title</span>
+                        <span className="text-zinc-200 font-semibold">{resumeData.personalInfo.title || "—"}</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-zinc-500 block uppercase font-semibold">Email</span>
+                        <span className="text-zinc-300 font-mono">{resumeData.personalInfo.email || "—"}</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-zinc-500 block uppercase font-semibold">Phone</span>
+                        <span className="text-zinc-300">{resumeData.personalInfo.phone || "—"}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Experience highlights */}
+                  <div className="bg-zinc-900/30 border border-zinc-850 p-4 rounded-xl space-y-3">
+                    <h4 className="font-bold text-white text-xs tracking-wide border-b border-zinc-800 pb-1.5">Work Timeline</h4>
+                    <div className="space-y-3">
+                      {resumeData.experience && resumeData.experience.length > 0 ? (
+                        resumeData.experience.map((exp) => (
+                          <div key={exp.id} className="border-l border-zinc-800 pl-3 py-0.5 space-y-0.5">
+                            <p className="font-bold text-zinc-200 text-xs">{exp.position}</p>
+                            <p className="text-[10px] text-violet-400">{exp.company} • {exp.startDate} - {exp.current ? "Present" : exp.endDate}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-zinc-500 italic">No job history parsed yet</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Skills tags list */}
+                  <div className="bg-zinc-900/30 border border-zinc-850 p-4 rounded-xl space-y-3">
+                    <h4 className="font-bold text-white text-xs tracking-wide border-b border-zinc-800 pb-1.5">Key Skills</h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {resumeData.skills && resumeData.skills.length > 0 ? (
+                        resumeData.skills.map((s) => (
+                          <span key={s.id} className="px-2 py-0.5 bg-zinc-800 text-zinc-300 rounded font-semibold text-[10px]">
+                            {s.name}
+                          </span>
+                        ))
+                      ) : (
+                        <p className="text-zinc-500 italic">No skills list parsed yet</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Launch Editor CTA */}
+              <button
+                onClick={() => setCurrentView("builder")}
+                className="w-full py-4 mt-6 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-750 hover:to-indigo-750 text-white font-bold rounded-xl text-sm transition-all shadow-lg hover:scale-[1.01] flex items-center justify-center gap-2 glow-pulse shrink-0"
+              >
+                🚀 Load Data and Open in Resume Builder
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </main>
+        </>
+      )}
+
+      {currentView === "cover-letter" && (
+        <>
+          <header className="sticky top-0 z-40 bg-[#070709]/80 backdrop-blur-md border-b border-zinc-800/80 px-6 h-16 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-3 cursor-pointer select-none" onClick={() => setCurrentView("landing")}>
+              <div className="bg-gradient-to-tr from-violet-600 to-indigo-600 p-2 rounded-xl text-white font-extrabold text-xs flex items-center justify-center border border-violet-500/20 shadow-lg shadow-violet-950/25">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div>
+                <h1 className="font-display font-extrabold text-white text-base tracking-wide uppercase">AI Cover Letter Suite</h1>
+                <p className="text-[9px] text-violet-400 font-mono tracking-widest uppercase font-bold">Outreach Architect</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setCurrentView("builder")}
+                className="px-4 py-2 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+              >
+                Open Resume Editor
+              </button>
+              <button
+                onClick={() => setCurrentView("landing")}
+                className="px-4 py-2 bg-zinc-900 border border-zinc-850 hover:bg-zinc-800 text-zinc-355 hover:text-white rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+              >
+                ← Back to Home
+              </button>
+            </div>
+          </header>
+
+          <main className="flex-1 flex overflow-hidden p-6">
+            <CoverLetterModal
+              isOpen={true}
+              isInline={true}
+              resumeData={resumeData}
+              selectedModel={settings.selectedModel}
+              apiKey={settings.selectedModel === "gemini" ? settings.geminiApiKey : settings.openAiApiKey}
+            />
+          </main>
+        </>
+      )}
+
+      {currentView === "optimizer" && (
+        <>
+          <header className="sticky top-0 z-40 bg-[#070709]/80 backdrop-blur-md border-b border-zinc-800/80 px-6 h-16 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-3 cursor-pointer select-none" onClick={() => setCurrentView("landing")}>
+              <div className="bg-gradient-to-tr from-violet-600 to-indigo-600 p-2 rounded-xl text-white font-extrabold text-xs flex items-center justify-center border border-violet-500/20 shadow-lg shadow-violet-950/25">
+                <Gauge className="w-5 h-5 animate-pulse" />
+              </div>
+              <div>
+                <h1 className="font-display font-extrabold text-white text-base tracking-wide uppercase">AI Optimization Center</h1>
+                <p className="text-[9px] text-violet-400 font-mono tracking-widest uppercase font-bold">ATS Audit Suite</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setCurrentView("builder")}
+                className="px-4 py-2 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+              >
+                Open Resume Editor
+              </button>
+              <button
+                onClick={() => setCurrentView("landing")}
+                className="px-4 py-2 bg-zinc-900 border border-zinc-850 hover:bg-zinc-800 text-zinc-355 hover:text-white rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+              >
+                ← Back to Home
+              </button>
+            </div>
+          </header>
+
+          <main className="flex-1 flex overflow-hidden p-6">
+            <div className="flex-1 h-full">
+              <OptimizationCenter
+                currentResume={resumeData}
+                onApplyOptimized={updateResumeData}
+                selectedModel={settings.selectedModel}
+                apiKey={settings.selectedModel === "gemini" ? settings.geminiApiKey : settings.openAiApiKey}
+                primaryColor={primaryColor}
+                isCV={isCV}
+                templateId={activeTemplate}
+                initialActiveTab={optSubTab}
+              />
+            </div>
+          </main>
+        </>
+      )}
+
+      {currentView === "portfolio" && (
+        <>
+          <header className="sticky top-0 z-40 bg-[#070709]/80 backdrop-blur-md border-b border-zinc-800/80 px-6 h-16 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-3 cursor-pointer select-none" onClick={() => setCurrentView("landing")}>
+              <div className="bg-gradient-to-tr from-violet-600 to-indigo-600 p-2 rounded-xl text-white font-extrabold text-xs flex items-center justify-center border border-violet-500/20 shadow-lg shadow-violet-950/25">
+                <Globe className="w-5 h-5" />
+              </div>
+              <div>
+                <h1 className="font-display font-extrabold text-white text-base tracking-wide uppercase">AI Portfolio website</h1>
+                <p className="text-[9px] text-violet-400 font-mono tracking-widest uppercase font-bold">Interactive Web Portal</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setCurrentView("builder")}
+                className="px-4 py-2 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+              >
+                Open Resume Editor
+              </button>
+              <button
+                onClick={() => setCurrentView("landing")}
+                className="px-4 py-2 bg-zinc-900 border border-zinc-850 hover:bg-zinc-800 text-zinc-355 hover:text-white rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+              >
+                ← Back to Home
+              </button>
+            </div>
+          </header>
+
+          <main className="flex-1 flex overflow-hidden p-6">
+            <PortfolioPreview
+              isOpen={true}
+              isInline={true}
+              resumeData={resumeData}
+            />
+          </main>
+        </>
+      )}
+
+      {currentView === "builder" && (
         <>
           {/* 1. TOP HEADER NAVIGATION BAR */}
           <header className="no-print sticky top-0 z-40 bg-[#070709]/80 backdrop-blur-md border-b border-zinc-800/80 px-6 h-16 flex items-center justify-between shrink-0">
@@ -558,24 +862,6 @@ export default function Dashboard() {
                     <Layout className="w-5 h-5" />
                   </button>
                   <button
-                    onClick={() => setActiveTab("tailor")}
-                    className={`p-3 rounded-xl transition-all ${
-                      activeTab === "tailor" ? "bg-violet-600/10 text-violet-400 border border-violet-500/20" : "text-zinc-500 hover:text-zinc-300"
-                    }`}
-                    title="Job Matcher"
-                  >
-                    <Briefcase className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("parse")}
-                    className={`p-3 rounded-xl transition-all ${
-                      activeTab === "parse" ? "bg-violet-600/10 text-violet-400 border border-violet-500/20" : "text-zinc-500 hover:text-zinc-300"
-                    }`}
-                    title="PDF/LinkedIn Parser"
-                  >
-                    <Upload className="w-5 h-5" />
-                  </button>
-                  <button
                     onClick={() => setActiveTab("history")}
                     className={`p-3 rounded-xl transition-all ${
                       activeTab === "history" ? "bg-violet-600/10 text-violet-400 border border-violet-500/20" : "text-zinc-500 hover:text-zinc-300"
@@ -584,32 +870,41 @@ export default function Dashboard() {
                   >
                     <Layers className="w-5 h-5" />
                   </button>
+
+                  <div className="h-[1px] w-8 bg-zinc-800 my-2 text-center" />
+
                   <button
-                    onClick={() => setActiveTab("optimization")}
-                    className={`p-3 rounded-xl transition-all ${
-                      activeTab === "optimization" ? "bg-violet-600/10 text-violet-400 border border-violet-500/20" : "text-zinc-500 hover:text-zinc-300"
-                    }`}
-                    title="AI Optimization Center"
+                    onClick={() => setCurrentView("parser")}
+                    className="p-3 rounded-xl transition-all text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50"
+                    title="Open AI Resume Parser"
                   >
-                    <Gauge className="w-5 h-5" />
+                    <Upload className="w-5 h-5 text-indigo-400" />
+                  </button>
+                  <button
+                    onClick={() => setCurrentView("optimizer")}
+                    className="p-3 rounded-xl transition-all text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50"
+                    title="Open AI Optimization Center"
+                  >
+                    <Gauge className="w-5 h-5 text-violet-400" />
+                  </button>
+                  <button
+                    onClick={() => setCurrentView("cover-letter")}
+                    className="p-3 rounded-xl transition-all text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50"
+                    title="Open AI Cover Letter Suite"
+                  >
+                    <FileText className="w-5 h-5 text-emerald-400" />
+                  </button>
+                  <button
+                    onClick={() => setCurrentView("portfolio")}
+                    className="p-3 rounded-xl transition-all text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50"
+                    title="Open AI Developer Portfolio Builder"
+                  >
+                    <Globe className="w-5 h-5 text-sky-400" />
                   </button>
                 </div>
 
                 <div className="space-y-3 flex flex-col items-center">
-                  <button
-                    onClick={() => setShowCoverLetter(true)}
-                    className="p-2.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
-                    title="Cover Letters"
-                  >
-                    <FileText className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setShowPortfolio(true)}
-                    className="p-2.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
-                    title="Portfolio Website"
-                  >
-                    <Globe className="w-4 h-4" />
-                  </button>
+                  {/* Empty spacer */}
                 </div>
               </div>
 
@@ -748,7 +1043,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-2">
               {/* Cover Letter Option */}
               <button
-                onClick={() => setShowCoverLetter(true)}
+                onClick={() => setCurrentView("cover-letter")}
                 className="px-3 py-1.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
                 title="Generate Cover Letter"
               >
@@ -824,6 +1119,8 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+        </>
+      )}
 
       {/* 3. SETTINGS MODAL OVERLAY */}
       {showSettings && (
@@ -920,9 +1217,7 @@ export default function Dashboard() {
       />
 
       {/* 7. GLOBAL FOOTER */}
-      <Footer />
-    </>
-  )}
-</div>
+      {currentView !== "landing" && <Footer />}
+    </div>
   );
 }

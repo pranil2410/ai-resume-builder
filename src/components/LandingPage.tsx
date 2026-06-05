@@ -22,11 +22,9 @@ import {
 
 interface LandingPageProps {
   onNavigate: (
-    tab: "editor" | "tailor" | "history" | "parse" | "optimization",
+    view: "builder" | "parser" | "optimizer" | "cover-letter" | "portfolio",
     options?: {
       isCV?: boolean;
-      showCoverLetter?: boolean;
-      showPortfolio?: boolean;
       optimizationTab?: "jd" | "role" | "hybrid";
     }
   ) => void;
@@ -50,7 +48,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
         </div>
 
         <button
-          onClick={() => onNavigate("editor")}
+          onClick={() => onNavigate("builder")}
           className="px-4 py-2 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-200 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shadow-md"
         >
           Launch Editor
@@ -84,14 +82,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center gap-4 mt-10 w-full justify-center">
             <button
-              onClick={() => onNavigate("editor")}
+              onClick={() => onNavigate("builder")}
               className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-750 hover:to-indigo-750 text-white font-bold rounded-2xl text-sm transition-all duration-300 shadow-lg shadow-violet-950/20 hover:scale-[1.02] flex items-center justify-center gap-2 glow-pulse"
             >
               Build Resume
               <ArrowRight className="w-4 h-4" />
             </button>
             <button
-              onClick={() => onNavigate("optimization")}
+              onClick={() => onNavigate("optimizer")}
               className="w-full sm:w-auto px-8 py-4 bg-zinc-900/60 border border-zinc-800 hover:bg-zinc-800/80 text-zinc-200 font-semibold rounded-2xl text-sm transition-all duration-300 flex items-center justify-center gap-2 backdrop-blur-md"
             >
               Try Resume Optimizer
@@ -179,7 +177,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   Interactive real-time form editing with embedded AI assists for writing impact-driven bullet points.
                 </p>
               </div>
-              <button onClick={() => onNavigate("editor")} className="mt-6 text-xs text-violet-400 hover:text-violet-300 font-bold flex items-center gap-1 w-fit group/btn">
+              <button onClick={() => onNavigate("builder")} className="mt-6 text-xs text-violet-400 hover:text-violet-300 font-bold flex items-center gap-1 w-fit group/btn">
                 Launch Builder
                 <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
               </button>
@@ -196,7 +194,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   Upload an existing PDF or plain text resume; our parser parses and restructures it into custom data structures.
                 </p>
               </div>
-              <button onClick={() => onNavigate("parse")} className="mt-6 text-xs text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1 w-fit group/btn">
+              <button onClick={() => onNavigate("parser")} className="mt-6 text-xs text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1 w-fit group/btn">
                 Parse Resume
                 <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
               </button>
@@ -213,7 +211,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   Audit formatting, grammar, and key technical phrases to see a dashboard of score metrics instantly.
                 </p>
               </div>
-              <button onClick={() => onNavigate("optimization", { optimizationTab: "jd" })} className="mt-6 text-xs text-fuchsia-400 hover:text-fuchsia-300 font-bold flex items-center gap-1 w-fit group/btn">
+              <button onClick={() => onNavigate("optimizer", { optimizationTab: "jd" })} className="mt-6 text-xs text-fuchsia-400 hover:text-fuchsia-300 font-bold flex items-center gap-1 w-fit group/btn">
                 Analyze ATS
                 <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
               </button>
@@ -230,7 +228,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   Paste job descriptions to compare keywords and experience lines, getting list reviews of missing skills.
                 </p>
               </div>
-              <button onClick={() => onNavigate("optimization", { optimizationTab: "jd" })} className="mt-6 text-xs text-violet-400 hover:text-violet-300 font-bold flex items-center gap-1 w-fit group/btn">
+              <button onClick={() => onNavigate("optimizer", { optimizationTab: "jd" })} className="mt-6 text-xs text-violet-400 hover:text-violet-300 font-bold flex items-center gap-1 w-fit group/btn">
                 Optimize for JD
                 <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
               </button>
@@ -247,7 +245,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   Select key career tracks to construct customized roadmap steps, projects, and interview preparation lists.
                 </p>
               </div>
-              <button onClick={() => onNavigate("optimization", { optimizationTab: "role" })} className="mt-6 text-xs text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1 w-fit group/btn">
+              <button onClick={() => onNavigate("optimizer", { optimizationTab: "role" })} className="mt-6 text-xs text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1 w-fit group/btn">
                 Optimize Role
                 <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
               </button>
@@ -264,7 +262,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   Combine career profiles with JD data to analyze hiring potentials, learning tasks, and packages.
                 </p>
               </div>
-              <button onClick={() => onNavigate("optimization", { optimizationTab: "hybrid" })} className="mt-6 text-xs text-fuchsia-400 hover:text-fuchsia-300 font-bold flex items-center gap-1 w-fit group/btn">
+              <button onClick={() => onNavigate("optimizer", { optimizationTab: "hybrid" })} className="mt-6 text-xs text-fuchsia-400 hover:text-fuchsia-300 font-bold flex items-center gap-1 w-fit group/btn">
                 Launch Hybrid
                 <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
               </button>
@@ -281,7 +279,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   Generate hyper-personalized cover letters and recruiter email drafts based on your tailored details.
                 </p>
               </div>
-              <button onClick={() => onNavigate("editor", { showCoverLetter: true })} className="mt-6 text-xs text-violet-400 hover:text-violet-300 font-bold flex items-center gap-1 w-fit group/btn">
+              <button onClick={() => onNavigate("cover-letter")} className="mt-6 text-xs text-violet-400 hover:text-violet-300 font-bold flex items-center gap-1 w-fit group/btn">
                 Draft Letter
                 <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
               </button>
@@ -298,7 +296,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   Toggle fields for patents, publications, teaching, research, and conferences for academic portfolios.
                 </p>
               </div>
-              <button onClick={() => onNavigate("editor", { isCV: true })} className="mt-6 text-xs text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1 w-fit group/btn">
+              <button onClick={() => onNavigate("builder", { isCV: true })} className="mt-6 text-xs text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1 w-fit group/btn">
                 Convert to CV
                 <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
               </button>
@@ -315,7 +313,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   Generate customizable interview checksheets and prep questions tailored to target tech stacks.
                 </p>
               </div>
-              <button onClick={() => onNavigate("optimization", { optimizationTab: "role" })} className="mt-6 text-xs text-fuchsia-400 hover:text-fuchsia-300 font-bold flex items-center gap-1 w-fit group/btn">
+              <button onClick={() => onNavigate("optimizer", { optimizationTab: "role" })} className="mt-6 text-xs text-fuchsia-400 hover:text-fuchsia-300 font-bold flex items-center gap-1 w-fit group/btn">
                 Start Prep
                 <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
               </button>
@@ -332,7 +330,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   Generate vector-perfect PDFs directly from the browser print dialog and structured DOCX files.
                 </p>
               </div>
-              <button onClick={() => onNavigate("editor")} className="mt-6 text-xs text-violet-400 hover:text-violet-300 font-bold flex items-center gap-1 w-fit group/btn">
+              <button onClick={() => onNavigate("builder")} className="mt-6 text-xs text-violet-400 hover:text-violet-300 font-bold flex items-center gap-1 w-fit group/btn">
                 Export Options
                 <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
               </button>
