@@ -7,11 +7,58 @@ interface TemplateProps {
   isCV: boolean;
 }
 
-// Color mapper helper - Unifies color system to purple accent color
-const getColorHex = (color: string) => "rgb(139, 92, 246)";
-const getTextColor = (color: string) => "text-violet-600";
-const getBgColor = (color: string) => "bg-violet-600";
-const getBorderColor = (color: string) => "border-violet-500";
+// Color mapper helper - Maps selected color name to style definitions
+const getColorHex = (color: string) => {
+  switch (color) {
+    case "indigo": return "rgb(99, 102, 241)";
+    case "emerald": return "rgb(16, 185, 129)";
+    case "rose": return "rgb(244, 63, 94)";
+    case "amber": return "rgb(245, 158, 11)";
+    case "sky": return "rgb(14, 165, 233)";
+    case "violet":
+    default:
+      return "rgb(139, 92, 246)";
+  }
+};
+
+const getTextColor = (color: string) => {
+  switch (color) {
+    case "indigo": return "text-indigo-600";
+    case "emerald": return "text-emerald-600";
+    case "rose": return "text-rose-600";
+    case "amber": return "text-amber-600";
+    case "sky": return "text-sky-600";
+    case "violet":
+    default:
+      return "text-violet-600";
+  }
+};
+
+const getBgColor = (color: string) => {
+  switch (color) {
+    case "indigo": return "bg-indigo-600";
+    case "emerald": return "bg-emerald-600";
+    case "rose": return "bg-rose-600";
+    case "amber": return "bg-amber-600";
+    case "sky": return "bg-sky-600";
+    case "violet":
+    default:
+      return "bg-violet-600";
+  }
+};
+
+const getBorderColor = (color: string) => {
+  switch (color) {
+    case "indigo": return "border-indigo-500";
+    case "emerald": return "border-emerald-500";
+    case "rose": return "border-rose-500";
+    case "amber": return "border-amber-500";
+    case "sky": return "border-sky-500";
+    case "violet":
+    default:
+      return "border-violet-500";
+  }
+};
 
 export const ResumeTemplates: React.FC<TemplateProps & { templateId: string }> = ({
   data,

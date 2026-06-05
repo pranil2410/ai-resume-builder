@@ -39,7 +39,8 @@ import {
   Linkedin,
   FileDown,
   Gauge,
-  Home
+  Home,
+  BookOpen
 } from "lucide-react";
 
 // Configure PDF.js worker
@@ -77,6 +78,8 @@ export default function Dashboard() {
   // 6. MODALS
   const [showCoverLetter, setShowCoverLetter] = useState(false);
   const [showPortfolio, setShowPortfolio] = useState(false);
+  const [isConvertingCV, setIsConvertingCV] = useState(false);
+  const [optSubTab, setOptSubTab] = useState<"jd" | "role" | "hybrid">("jd");
 
   // LOAD LOCALS ON MOUNT
   useEffect(() => {
@@ -145,6 +148,31 @@ export default function Dashboard() {
     const nextVersions = versions.filter((v) => v.id !== id);
     setVersions(nextVersions);
     localStorage.setItem("resume_versions", JSON.stringify(nextVersions));
+  };
+
+  const handleAIConvertToCV = async () => {
+    const apiKey = settings.selectedModel === "gemini" ? settings.geminiApiKey : settings.openAiApiKey;
+    if (settings.selectedModel !== "mock" && !apiKey) {
+      alert("Please configure your API key in the settings panel first.");
+      setShowSettings(true);
+      return;
+    }
+    setIsConvertingCV(true);
+    try {
+      const parsedCV = await AIService.convertToCV(resumeData, {
+        apiKey,
+        provider: settings.selectedModel,
+      });
+      updateResumeData(parsedCV);
+      setIsCV(true);
+      setActiveTab("editor");
+      alert("Resume successfully converted to an Academic CV using AI! Publications, patents, teaching, research, and conferences sections have been populated.");
+    } catch (err: any) {
+      console.error(err);
+      alert(`CV conversion failed: ${err.message || "Please check API configurations."}`);
+    } finally {
+      setIsConvertingCV(false);
+    }
   };
 
   // PARSER CLIENT-SIDE (PDF parsing using pdf.js text contents)
@@ -410,13 +438,32 @@ export default function Dashboard() {
     <div className="min-h-screen bg-[#070709] text-zinc-300 font-sans flex flex-col antialiased">
       {currentView === "landing" ? (
         <LandingPage
-          onBuildResume={() => {
+          onNavigate={(tab, options) => {
             setCurrentView("builder");
-            setActiveTab("editor");
-          }}
-          onTryOptimizer={() => {
-            setCurrentView("builder");
-            setActiveTab("optimization");
+            setActiveTab(tab);
+            if (options?.isCV !== undefined) {
+              setIsCV(options.isCV);
+              if (options.isCV) {
+                updateResumeData({
+                  ...resumeData,
+                  publications: resumeData.publications || [],
+                  research: resumeData.research || [],
+                  teaching: resumeData.teaching || [],
+                  patents: resumeData.patents || [],
+                  awards: resumeData.awards || [],
+                  conferences: resumeData.conferences || [],
+                });
+              }
+            }
+            if (options?.showCoverLetter !== undefined) {
+              setShowCoverLetter(options.showCoverLetter);
+            }
+            if (options?.showPortfolio !== undefined) {
+              setShowPortfolio(options.showPortfolio);
+            }
+            if (options?.optimizationTab !== undefined) {
+              setOptSubTab(options.optimizationTab);
+            }
           }}
         />
       ) : (
@@ -613,6 +660,7 @@ export default function Dashboard() {
                 primaryColor={primaryColor}
                 isCV={isCV}
                 templateId={activeTemplate}
+                initialActiveTab={optSubTab}
               />
             )}
 
@@ -698,6 +746,39 @@ export default function Dashboard() {
 
             {/* Export options */}
             <div className="flex items-center gap-2">
+              {/* Cover Letter Option */}
+              <button
+                onClick={() => setShowCoverLetter(true)}
+                className="px-3 py-1.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+                title="Generate Cover Letter"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-violet-400" />
+                Cover Letter
+              </button>
+
+              {/* Convert to CV Option */}
+              <button
+                onClick={handleAIConvertToCV}
+                disabled={isConvertingCV}
+                className="px-3 py-1.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 disabled:opacity-40"
+                title="Convert to Academic CV using AI"
+              >
+                {isConvertingCV ? (
+                  <>
+                    <span className="animate-spin inline-block w-3 h-3 border-2 border-t-violet-400 border-r-transparent rounded-full" />
+                    Converting...
+                  </>
+                ) : (
+                  <>
+                    <BookOpen className="w-3.5 h-3.5 text-violet-400" />
+                    Convert to CV (AI)
+                  </>
+                )}
+              </button>
+
+              {/* Divider */}
+              <div className="w-px h-5 bg-zinc-850 mx-1" />
+
               {/* Export PDF via standard Window Print dialog */}
               <button
                 onClick={() => window.print()}

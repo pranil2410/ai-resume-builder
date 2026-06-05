@@ -36,6 +36,7 @@ interface OptimizationCenterProps {
   primaryColor: string;
   isCV: boolean;
   templateId: string;
+  initialActiveTab?: "jd" | "role" | "hybrid";
 }
 
 type TabType = "jd" | "role" | "hybrid";
@@ -109,8 +110,9 @@ export const OptimizationCenter: React.FC<OptimizationCenterProps> = ({
   primaryColor,
   isCV,
   templateId,
+  initialActiveTab,
 }) => {
-  const [activeTab, setActiveTab] = useState<TabType>("jd");
+  const [activeTab, setActiveTab] = useState<TabType>(initialActiveTab || "jd");
   const [isLoading, setIsLoading] = useState(false);
 
   // Resume Data used for optimization (either editor state or uploaded)
